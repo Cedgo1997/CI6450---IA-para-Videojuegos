@@ -4,9 +4,6 @@ extends Area2D
 
 signal enemy_entered
 signal enemy_exited
-signal entered_outer_zone
-signal exited_outer_zone
-
 var screen_size
 
 func _ready():
