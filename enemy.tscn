@@ -1,0 +1,24 @@
+[gd_scene load_steps=4 format=3 uid="uid://b152f2e4rl4fc"]
+
+[ext_resource type="Script" uid="uid://bidq4m7mhio4n" path="res://enemy.gd" id="1_4gyqm"]
+[ext_resource type="Texture2D" uid="uid://cv8egxtciwh8v" path="res://art/beetle-2.png" id="1_7k104"]
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_4gyqm"]
+radius = 27.0
+height = 58.0
+
+[node name="Enemy" type="RigidBody2D" groups=["enemy"]]
+collision_layer = 2
+gravity_scale = 0.0
+contact_monitor = true
+max_contacts_reported = 10
+script = ExtResource("1_4gyqm")
+metadata/_edit_group_ = true
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("CapsuleShape2D_4gyqm")
+
+[node name="Sprite2D" type="Sprite2D" parent="." groups=["enemy"]]
+rotation = 1.5707964
+scale = Vector2(0.2, 0.2)
+texture = ExtResource("1_7k104")
