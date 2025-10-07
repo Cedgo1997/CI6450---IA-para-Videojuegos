@@ -101,12 +101,10 @@ func random_binomial() -> float:
 
 func _on_player_touched():
 	is_touching_player = true
-	pass
 
 # Función que se ejecuta cuando el player emite la señal "enemy_exited"
 func _on_player_fled():
 	is_touching_player = false
-	pass
 
 func _start_new_wander_timer():
 	var interval = randf_range(0.5, 1)

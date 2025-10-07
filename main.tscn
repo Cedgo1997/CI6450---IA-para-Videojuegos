@@ -1,9 +1,10 @@
-[gd_scene load_steps=5 format=3 uid="uid://c1kgs4er807ve"]
+[gd_scene load_steps=6 format=3 uid="uid://c1kgs4er807ve"]
 
 [ext_resource type="PackedScene" uid="uid://c5uyejrtyb4uk" path="res://player.tscn" id="1_0xm2m"]
 [ext_resource type="Script" uid="uid://cbh6kaox5b7v0" path="res://main.gd" id="1_1bvp3"]
 [ext_resource type="PackedScene" uid="uid://b152f2e4rl4fc" path="res://enemy.tscn" id="2_h2yge"]
 [ext_resource type="AudioStream" uid="uid://fmp824ckngfh" path="res://art/Insectoid Circuitry.mp3" id="3_h2yge"]
+[ext_resource type="PackedScene" uid="uid://btpoffdxi6vp7" path="res://enemy_2.tscn" id="4_lquwl"]
 
 [node name="Arrive" type="Node2D"]
 script = ExtResource("1_1bvp3")
@@ -15,7 +16,6 @@ offset_bottom = 480.0
 color = Color(0.39114353, 0.57996243, 0.24716915, 1)
 
 [node name="Player" parent="." instance=ExtResource("1_0xm2m")]
-visible = false
 position = Vector2(360, 240)
 
 [node name="EnemyArrive" parent="." instance=ExtResource("2_h2yge")]
@@ -27,10 +27,19 @@ position = Vector2(720, 0)
 algorithm = 0
 
 [node name="EnemyWander" parent="." instance=ExtResource("2_h2yge")]
+visible = false
 position = Vector2(460, 240)
 algorithm = 2
 max_speed = 50.0
 rotation_speed = 1.0
+
+[node name="EnemySeeker" parent="." instance=ExtResource("4_lquwl")]
+visible = false
+
+[node name="EnemyEscaper" parent="." instance=ExtResource("4_lquwl")]
+visible = false
+position = Vector2(360, 240)
+algorithm = 1
 
 [node name="Camera2D" type="Camera2D" parent="."]
 position = Vector2(360, 240)
