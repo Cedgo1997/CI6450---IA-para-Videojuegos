@@ -1,15 +1,22 @@
 extends RigidBody2D
 
+enum SteeringAlgorithm {
+	SEEK,
+	ARRIVE,
+	WANDER
+}
+
+@export var algorithm: SteeringAlgorithm = SteeringAlgorithm.ARRIVE
 @export var max_speed = 200.0
 @export var rotation_speed = 8.0
 
+@export_group("Arrive Settings")
 @export var inner_radius = 28.0
 @export var outer_radius = 100.0
 @export var time_to_target = 0.8
- 
+
 var target: Node2D = null
 var is_touching_player = false
-
 	
 func _ready():
 	# Buscar al jugador en la escena
@@ -26,16 +33,22 @@ func _physics_process(delta):
 	if target == null:
 		return
 	
-	if not is_touching_player:
-		var steering_velocity = kinematic_arrive()
-		linear_velocity = steering_velocity
+	var steering_velocity = Vector2.ZERO
 		
-		if steering_velocity.length() > 0:
-			var target_rotation = steering_velocity.angle()
-			rotation = lerp_angle(rotation, target_rotation, rotation_speed * delta)
-	else:
-		linear_velocity = Vector2.ZERO
+	match algorithm:
+		SteeringAlgorithm.SEEK:
+			steering_velocity = kinematic_seek()
+		SteeringAlgorithm.ARRIVE:
+			steering_velocity = kinematic_arrive()
+		SteeringAlgorithm.WANDER:
+			pass
 		
+	linear_velocity = steering_velocity
+		
+	if steering_velocity.length() > 0:
+		var target_rotation = steering_velocity.angle()
+		rotation = lerp_angle(rotation, target_rotation, rotation_speed * delta)
+			
 func kinematic_seek() -> Vector2:
 	# Obtener la dirección hacia el objetivo
 	var direction = target.global_position - global_position
@@ -51,7 +64,7 @@ func kinematic_arrive() -> Vector2:
 	var direction = target.global_position - global_position
 	var distance = direction.length()
 	
-	if distance < inner_radius:
+	if distance < inner_radius or is_touching_player:
 		return Vector2.ZERO
 	
 	if distance > outer_radius:
