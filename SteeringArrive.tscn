@@ -1,7 +1,8 @@
-[gd_scene load_steps=5 format=3 uid="uid://dv2rcma53yimg"]
+[gd_scene load_steps=6 format=3 uid="uid://dv2rcma53yimg"]
 
 [ext_resource type="Script" uid="uid://cbh6kaox5b7v0" path="res://main.gd" id="1_0x1dj"]
 [ext_resource type="PackedScene" uid="uid://c5uyejrtyb4uk" path="res://player.tscn" id="2_a8v6f"]
+[ext_resource type="Script" uid="uid://btwkd0crmdsdn" path="res://enemy_2.gd" id="4_0x1dj"]
 [ext_resource type="PackedScene" uid="uid://btpoffdxi6vp7" path="res://enemy_2.tscn" id="4_tl4yu"]
 [ext_resource type="AudioStream" uid="uid://fmp824ckngfh" path="res://art/Insectoid Circuitry.mp3" id="5_bgvce"]
 
@@ -18,8 +19,13 @@ color = Color(0.39114353, 0.57996243, 0.24716915, 1)
 position = Vector2(360, 240)
 
 [node name="EnemyArrive" parent="." instance=ExtResource("4_tl4yu")]
-algorithm = 2
-target_radius = 60.0
+script = ExtResource("4_0x1dj")
+algorithm = 0
+max_acceleration = 100.0
+rotation_speed = 8.0
+target_radius = 20.0
+slow_radius = 120.0
+time_to_target = 0.1
 
 [node name="Camera2D" type="Camera2D" parent="."]
 position = Vector2(360, 240)

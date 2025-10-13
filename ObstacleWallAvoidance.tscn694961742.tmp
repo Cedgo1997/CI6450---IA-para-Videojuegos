@@ -1,0 +1,32 @@
+[gd_scene load_steps=5 format=3 uid="uid://c0g6r8bpn1le0"]
+
+[ext_resource type="Script" uid="uid://cbh6kaox5b7v0" path="res://main.gd" id="1_uboxy"]
+[ext_resource type="PackedScene" uid="uid://cpd7qmb540grs" path="res://dung.tscn" id="2_3ti2v"]
+[ext_resource type="PackedScene" uid="uid://q1qvyd6orb02" path="res://enemy_4.tscn" id="2_agyqe"]
+[ext_resource type="AudioStream" uid="uid://fmp824ckngfh" path="res://art/Insectoid Circuitry.mp3" id="3_wksmj"]
+
+[node name="Arrive" type="Node2D"]
+script = ExtResource("1_uboxy")
+metadata/_edit_group_ = true
+
+[node name="ColorRect" type="ColorRect" parent="."]
+offset_right = 720.0
+offset_bottom = 480.0
+color = Color(0.39114353, 0.57996243, 0.24716915, 1)
+
+[node name="Enemy" parent="." instance=ExtResource("2_agyqe")]
+position = Vector2(0, 40)
+avoid_distance = 100.0
+lookahead = 500.0
+max_angular_acceleration = 20.0
+max_rotation_speed = 10.0
+
+[node name="Dung" parent="." instance=ExtResource("2_3ti2v")]
+position = Vector2(200, 40)
+
+[node name="Camera2D" type="Camera2D" parent="."]
+position = Vector2(360, 240)
+
+[node name="Music" type="AudioStreamPlayer2D" parent="."]
+stream = ExtResource("3_wksmj")
+parameters/looping = true

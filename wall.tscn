@@ -1,0 +1,103 @@
+[gd_scene load_steps=3 format=3 uid="uid://nysdldd5dm0u"]
+
+[ext_resource type="Texture2D" uid="uid://d1u3nm58iof37" path="res://art/brick.png" id="1_xxgf6"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_y4f30"]
+size = Vector2(720, 47)
+
+[node name="Wall" type="Node2D" groups=["obstacle"]]
+metadata/_edit_group_ = true
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(361, 24.5)
+shape = SubResource("RectangleShape2D_y4f30")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+position = Vector2(25.999998, 24)
+scale = Vector2(0.32894737, 0.31506848)
+texture = ExtResource("1_xxgf6")
+metadata/_edit_group_ = true
+
+[node name="Sprite2D2" type="Sprite2D" parent="."]
+position = Vector2(77, 24.000002)
+scale = Vector2(0.32894737, 0.31506848)
+texture = ExtResource("1_xxgf6")
+metadata/_edit_group_ = true
+
+[node name="Sprite2D3" type="Sprite2D" parent="."]
+position = Vector2(127, 24)
+scale = Vector2(0.32894737, 0.31506848)
+texture = ExtResource("1_xxgf6")
+metadata/_edit_group_ = true
+
+[node name="Sprite2D4" type="Sprite2D" parent="."]
+position = Vector2(178, 24)
+scale = Vector2(0.32894737, 0.31506848)
+texture = ExtResource("1_xxgf6")
+metadata/_edit_group_ = true
+
+[node name="Sprite2D5" type="Sprite2D" parent="."]
+position = Vector2(230, 24)
+scale = Vector2(0.32894737, 0.31506848)
+texture = ExtResource("1_xxgf6")
+metadata/_edit_group_ = true
+
+[node name="Sprite2D6" type="Sprite2D" parent="."]
+position = Vector2(281, 24)
+scale = Vector2(0.32894737, 0.31506848)
+texture = ExtResource("1_xxgf6")
+metadata/_edit_group_ = true
+
+[node name="Sprite2D7" type="Sprite2D" parent="."]
+position = Vector2(331, 24)
+scale = Vector2(0.32894737, 0.31506848)
+texture = ExtResource("1_xxgf6")
+metadata/_edit_group_ = true
+
+[node name="Sprite2D8" type="Sprite2D" parent="."]
+position = Vector2(379, 24)
+scale = Vector2(0.32894737, 0.31506848)
+texture = ExtResource("1_xxgf6")
+metadata/_edit_group_ = true
+
+[node name="Sprite2D9" type="Sprite2D" parent="."]
+position = Vector2(430, 24)
+scale = Vector2(0.32894737, 0.31506848)
+texture = ExtResource("1_xxgf6")
+metadata/_edit_group_ = true
+
+[node name="Sprite2D10" type="Sprite2D" parent="."]
+position = Vector2(480.99997, 24)
+scale = Vector2(0.32894737, 0.31506848)
+texture = ExtResource("1_xxgf6")
+metadata/_edit_group_ = true
+
+[node name="Sprite2D11" type="Sprite2D" parent="."]
+position = Vector2(533, 24)
+scale = Vector2(0.32894737, 0.31506848)
+texture = ExtResource("1_xxgf6")
+metadata/_edit_group_ = true
+
+[node name="Sprite2D12" type="Sprite2D" parent="."]
+position = Vector2(584, 24)
+scale = Vector2(0.32894737, 0.31506848)
+texture = ExtResource("1_xxgf6")
+metadata/_edit_group_ = true
+
+[node name="Sprite2D13" type="Sprite2D" parent="."]
+position = Vector2(635, 24)
+scale = Vector2(0.32894737, 0.31506848)
+texture = ExtResource("1_xxgf6")
+metadata/_edit_group_ = true
+
+[node name="Sprite2D14" type="Sprite2D" parent="."]
+position = Vector2(686, 24)
+scale = Vector2(0.32894737, 0.31506848)
+texture = ExtResource("1_xxgf6")
+metadata/_edit_group_ = true
+
+[node name="Sprite2D15" type="Sprite2D" parent="."]
+position = Vector2(695, 24)
+scale = Vector2(0.32894737, 0.31506848)
+texture = ExtResource("1_xxgf6")
+metadata/_edit_group_ = true

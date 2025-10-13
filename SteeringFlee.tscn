@@ -1,8 +1,9 @@
-[gd_scene load_steps=5 format=3 uid="uid://cklm124ywg3hq"]
+[gd_scene load_steps=6 format=3 uid="uid://cklm124ywg3hq"]
 
 [ext_resource type="Script" uid="uid://cbh6kaox5b7v0" path="res://main.gd" id="1_xtmy1"]
 [ext_resource type="PackedScene" uid="uid://c5uyejrtyb4uk" path="res://player.tscn" id="2_eo67s"]
 [ext_resource type="PackedScene" uid="uid://btpoffdxi6vp7" path="res://enemy_2.tscn" id="4_ovfoh"]
+[ext_resource type="Script" uid="uid://btwkd0crmdsdn" path="res://enemy_2.gd" id="4_xtmy1"]
 [ext_resource type="AudioStream" uid="uid://fmp824ckngfh" path="res://art/Insectoid Circuitry.mp3" id="5_3rg8j"]
 
 [node name="Arrive" type="Node2D"]
@@ -19,7 +20,13 @@ position = Vector2(360, 240)
 
 [node name="EnemyEscaper" parent="." instance=ExtResource("4_ovfoh")]
 position = Vector2(360, 240)
+script = ExtResource("4_xtmy1")
 algorithm = 1
+max_acceleration = 100.0
+rotation_speed = 8.0
+target_radius = 20.0
+slow_radius = 120.0
+time_to_target = 0.1
 
 [node name="Camera2D" type="Camera2D" parent="."]
 position = Vector2(360, 240)

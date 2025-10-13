@@ -17,11 +17,10 @@ enum SteeringAlgorithm {
 
 @export_group("Wander Settings")
 @export var max_rotation = 2.0
-@export var min_rotation = 0.5 # Rango mínimo para variación
-@export var max_rotation_limit = 3.0 # Rango máximo para variación
-# Estos valores definen qué tan drástica será la rotación
-@export var wander_min_turn_angle = deg_to_rad(45) # mínimo de grads de diferencia
-@export var wander_max_turn_angle = deg_to_rad(90) # máximo de grados de diferencia
+@export var min_rotation = 0.5 
+@export var max_rotation_limit = 3.0 
+@export var wander_min_turn_angle = deg_to_rad(45) 
+@export var wander_max_turn_angle = deg_to_rad(90)
 
 var wander_orientation = 0.0
 var wander_target_orientation = 0.0
@@ -30,14 +29,12 @@ var target: Node2D = null
 var is_touching_player = false
 	
 func _ready():
-	# Buscar al jugador en la escena
 	var players = get_tree().get_nodes_in_group("player")
 	if players.size() > 0:
 		target = players[0] 
 		
 		target.enemy_entered.connect(_on_player_touched)
 		target.enemy_exited.connect(_on_player_fled)
-	# Configurar el RigidBody2D para control manual
 	lock_rotation = false
 	_start_new_wander_timer()
 
@@ -99,7 +96,6 @@ func random_binomial() -> float:
 func _on_player_touched():
 	is_touching_player = true
 
-# Función que se ejecuta cuando el player emite la señal "enemy_exited"
 func _on_player_fled():
 	is_touching_player = false
 

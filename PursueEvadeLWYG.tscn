@@ -15,16 +15,18 @@ offset_bottom = 480.0
 color = Color(0.39114353, 0.57996243, 0.24716915, 1)
 
 [node name="Player" parent="." instance=ExtResource("2_l53lf")]
-position = Vector2(660, 40)
+position = Vector2(539, 241)
 rotation = 4.712389
+speed = 150.0
 
 [node name="Enemy" parent="." instance=ExtResource("3_74ymv")]
-position = Vector2(660, 440)
+position = Vector2(427, 231)
 rotation = 4.712389
-algorithm = 3
+algorithm = 4
 max_angular_acceleration = 20.0
 max_rotation_speed = 10.0
 max_linear_acceleration = 400.0
+max_speed = 100.0
 
 [node name="Camera2D" type="Camera2D" parent="."]
 position = Vector2(360, 240)
