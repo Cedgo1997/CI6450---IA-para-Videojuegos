@@ -13,6 +13,8 @@ gravity_scale = 0.0
 contact_monitor = true
 max_contacts_reported = 10
 script = ExtResource("1_dxyk6")
+algorithm = 2
+use_look_where_youre_going = true
 metadata/_edit_group_ = true
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]

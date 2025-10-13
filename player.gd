@@ -4,11 +4,9 @@ extends Area2D
 
 signal enemy_entered
 signal enemy_exited
-var screen_size
 
 func _ready():
-	#position = get_viewport_rect().size / 2
-	screen_size = get_viewport_rect().size
+	pass
 
 func _process(delta):
 	var velocity = Vector2.ZERO
@@ -26,7 +24,6 @@ func _process(delta):
 		velocity = velocity.normalized()
 	
 	position += velocity * speed * delta
-	position = position.clamp(Vector2.ZERO, screen_size)
 	
 	if velocity.length() > 0:
 		var target_rotation = velocity.angle()

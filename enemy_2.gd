@@ -31,7 +31,6 @@ func _physics_process(delta):
 	if target == null:
 		return
 	
-	# Obtener el steering (aceleración) según el algoritmo
 	var steering_output = Vector2.ZERO
 	
 	match algorithm:
@@ -69,11 +68,7 @@ func steering_seek() -> Vector2:
 
 func steering_flee() -> Vector2:
 	var result = Vector2.ZERO
-	
-	# Obtener la dirección OPUESTA al objetivo (invertir el signo)
 	result = global_position - target.global_position
-	
-	# Normalizar y aplicar aceleración máxima
 	if result.length() > 0:
 		result = result.normalized()
 	

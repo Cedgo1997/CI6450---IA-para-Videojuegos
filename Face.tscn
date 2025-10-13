@@ -1,0 +1,106 @@
+[gd_scene load_steps=5 format=3 uid="uid://bh588mlv8ck24"]
+
+[ext_resource type="Script" uid="uid://cbh6kaox5b7v0" path="res://main.gd" id="1_wjvkp"]
+[ext_resource type="PackedScene" uid="uid://c5uyejrtyb4uk" path="res://player.tscn" id="2_h4e3f"]
+[ext_resource type="PackedScene" uid="uid://dgot21w856jui" path="res://enemy_3.tscn" id="3_p8ss5"]
+[ext_resource type="AudioStream" uid="uid://fmp824ckngfh" path="res://art/Insectoid Circuitry.mp3" id="4_441o5"]
+
+[node name="Arrive" type="Node2D"]
+script = ExtResource("1_wjvkp")
+metadata/_edit_group_ = true
+
+[node name="ColorRect" type="ColorRect" parent="."]
+offset_right = 720.0
+offset_bottom = 480.0
+color = Color(0.39114353, 0.57996243, 0.24716915, 1)
+
+[node name="Player" parent="." instance=ExtResource("2_h4e3f")]
+position = Vector2(360, 240)
+rotation = 4.712389
+
+[node name="Enemy" parent="." instance=ExtResource("3_p8ss5")]
+position = Vector2(60, 440)
+rotation = 4.712389
+algorithm = 5
+max_angular_acceleration = 50.0
+max_rotation_speed = 20.0
+max_linear_acceleration = 400.0
+
+[node name="Enemy2" parent="." instance=ExtResource("3_p8ss5")]
+position = Vector2(160, 440)
+rotation = 4.712389
+algorithm = 5
+max_angular_acceleration = 50.0
+max_rotation_speed = 20.0
+max_linear_acceleration = 400.0
+
+[node name="Enemy3" parent="." instance=ExtResource("3_p8ss5")]
+position = Vector2(260, 440)
+rotation = 4.712389
+algorithm = 5
+max_angular_acceleration = 50.0
+max_rotation_speed = 20.0
+max_linear_acceleration = 400.0
+
+[node name="Enemy4" parent="." instance=ExtResource("3_p8ss5")]
+position = Vector2(360, 440)
+rotation = 4.712389
+algorithm = 5
+max_angular_acceleration = 50.0
+max_rotation_speed = 20.0
+max_linear_acceleration = 400.0
+
+[node name="Enemy5" parent="." instance=ExtResource("3_p8ss5")]
+position = Vector2(460, 440)
+rotation = 4.712389
+algorithm = 5
+max_angular_acceleration = 50.0
+max_rotation_speed = 20.0
+max_linear_acceleration = 400.0
+
+[node name="Enemy6" parent="." instance=ExtResource("3_p8ss5")]
+position = Vector2(660, 40)
+rotation = 4.712389
+algorithm = 5
+max_angular_acceleration = 50.0
+max_rotation_speed = 20.0
+max_linear_acceleration = 400.0
+
+[node name="Enemy7" parent="." instance=ExtResource("3_p8ss5")]
+position = Vector2(560, 40)
+rotation = 4.712389
+algorithm = 5
+max_angular_acceleration = 50.0
+max_rotation_speed = 20.0
+max_linear_acceleration = 400.0
+
+[node name="Enemy8" parent="." instance=ExtResource("3_p8ss5")]
+position = Vector2(460, 40)
+rotation = 4.712389
+algorithm = 5
+max_angular_acceleration = 50.0
+max_rotation_speed = 20.0
+max_linear_acceleration = 400.0
+
+[node name="Enemy9" parent="." instance=ExtResource("3_p8ss5")]
+position = Vector2(360, 40)
+rotation = 4.712389
+algorithm = 5
+max_angular_acceleration = 50.0
+max_rotation_speed = 20.0
+max_linear_acceleration = 400.0
+
+[node name="Enemy10" parent="." instance=ExtResource("3_p8ss5")]
+position = Vector2(260, 40)
+rotation = 4.712389
+algorithm = 5
+max_angular_acceleration = 50.0
+max_rotation_speed = 20.0
+max_linear_acceleration = 400.0
+
+[node name="Camera2D" type="Camera2D" parent="."]
+position = Vector2(360, 240)
+
+[node name="Music" type="AudioStreamPlayer2D" parent="."]
+stream = ExtResource("4_441o5")
+parameters/looping = true

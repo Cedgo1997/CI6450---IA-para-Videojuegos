@@ -5,7 +5,8 @@ enum SteeringAlgorithm {
 	VELOCITY_MATCH,
 	ALIGN_AND_VELOCITY_MATCH,
 	PURSUE,
-	EVADE
+	EVADE,
+	FACE
 }
 
 @export var algorithm: SteeringAlgorithm = SteeringAlgorithm.ALIGN
@@ -22,12 +23,13 @@ enum SteeringAlgorithm {
 @export var max_linear_acceleration = 100.0
 @export var linear_time_to_target = 0.1
 
-@export_group("Pursue/Evade Settings")
+@export_group("Pursue-Evade Settings")
 @export var max_speed = 200.0
 @export var max_prediction_time = 1.0
 @export var arrive_target_radius = 20.0
 @export var arrive_slow_radius = 120.0
 @export var arrive_time_to_target = 0.1
+@export var use_look_where_youre_going = false
 
 var target: Node2D = null
 var current_rotation_speed = 0.0
@@ -64,6 +66,8 @@ func _physics_process(delta):
 			steering_pursue(delta)
 		SteeringAlgorithm.EVADE:
 			steering_evade(delta)
+		SteeringAlgorithm.FACE:
+			steering_face(delta)
 
 func steering_align(delta: float) -> void:
 	var rotation_diff = target.rotation - rotation
@@ -116,7 +120,9 @@ func steering_pursue(delta: float) -> void:
 	if linear_velocity.length() > max_speed:
 		linear_velocity = linear_velocity.normalized() * max_speed
 	
-	if linear_velocity.length() > 0.1:
+	if use_look_where_youre_going:
+		steering_look_where_youre_going(delta)
+	elif linear_velocity.length() > 0.1:
 		var target_rotation = linear_velocity.angle()
 		rotation = lerp_angle(rotation, target_rotation, 8.0 * delta)
 
@@ -141,9 +147,48 @@ func steering_evade(delta: float) -> void:
 	if linear_velocity.length() > max_speed:
 		linear_velocity = linear_velocity.normalized() * max_speed
 	
-	if linear_velocity.length() > 0.1:
+	if use_look_where_youre_going:
+		steering_look_where_youre_going(delta)
+	elif linear_velocity.length() > 0.1:
 		var target_rotation = linear_velocity.angle()
 		rotation = lerp_angle(rotation, target_rotation, 8.0 * delta)
+
+func steering_face(delta: float) -> void:
+	var direction = target.global_position - global_position
+	if direction.length() == 0:
+		return
+	
+	var target_orientation = atan2(direction.y, direction.x)
+	steering_align_internal(target_orientation, delta)
+
+func steering_look_where_youre_going(delta: float) -> void:
+	if linear_velocity.length() == 0:
+		return
+	
+	var target_orientation = atan2(linear_velocity.y, linear_velocity.x)
+	steering_align_internal(target_orientation, delta)
+
+func steering_align_internal(target_orientation: float, delta: float) -> void:
+	var rotation_diff = target_orientation - rotation
+	rotation_diff = map_to_range(rotation_diff)
+	var rotation_size = abs(rotation_diff)
+	
+	if rotation_size < target_radius:
+		angular_velocity = 0
+		return
+	
+	var target_rotation_speed = max_rotation_speed
+	if rotation_size < slow_radius:
+		target_rotation_speed = max_rotation_speed * rotation_size / slow_radius
+	
+	target_rotation_speed *= sign(rotation_diff)
+	
+	var angular_acceleration = (target_rotation_speed - angular_velocity) / angular_time_to_target
+	
+	if abs(angular_acceleration) > max_angular_acceleration:
+		angular_acceleration = sign(angular_acceleration) * max_angular_acceleration
+	
+	angular_velocity += angular_acceleration * delta
 
 func steering_arrive_internal(target_position: Vector2, delta: float) -> Vector2:
 	var direction = target_position - global_position
