@@ -41,7 +41,7 @@ func _physics_process(delta):
 			steering_output = steering_flee()
 		SteeringAlgorithm.STEERING_ARRIVE:
 			if target:
-				steering_output = steering_arrive(delta)
+				steering_output = steering_arrive()
 	
 	current_velocity += steering_output * delta
 	
@@ -76,7 +76,7 @@ func steering_flee() -> Vector2:
 	
 	return result
 
-func steering_arrive(delta: float) -> Vector2:
+func steering_arrive() -> Vector2:
 	if target == null:
 		return Vector2.ZERO
 
