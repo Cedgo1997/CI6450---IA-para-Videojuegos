@@ -6,7 +6,8 @@ enum SteeringAlgorithm {
 	ALIGN_AND_VELOCITY_MATCH,
 	PURSUE,
 	EVADE,
-	FACE
+	FACE,
+	WANDER
 }
 
 @export var algorithm: SteeringAlgorithm = SteeringAlgorithm.ALIGN
@@ -31,10 +32,20 @@ enum SteeringAlgorithm {
 @export var arrive_time_to_target = 0.1
 @export var use_look_where_youre_going = false
 
+@export_group("Wander Settings")
+@export var wander_offset = 100.0  # Distancia del círculo de wandering
+@export var wander_radius = 50.0   # Radio del círculo de wandering
+@export var wander_rate = 3.0      # Velocidad de cambio de orientación
+@export var wander_max_speed = 150.0  # Velocidad máxima en wander
+
 var target: Node2D = null
 var current_rotation_speed = 0.0
 var previous_target_position = Vector2.ZERO
 var target_velocity = Vector2.ZERO
+
+# Variables para Wander
+var wander_orientation = 0.0
+var wander_target = Vector2.ZERO
 
 func _ready():
 	var players = get_tree().get_nodes_in_group("player")
@@ -44,12 +55,13 @@ func _ready():
 	
 	lock_rotation = false
 	linear_velocity = Vector2.ZERO
+	wander_orientation = rotation
 
 func _physics_process(delta):
-	if target == null:
+	if target == null and algorithm != SteeringAlgorithm.WANDER:
 		return
 	
-	if delta > 0:
+	if target and delta > 0:
 		var current_target_position = target.global_position
 		target_velocity = (current_target_position - previous_target_position) / delta
 		previous_target_position = current_target_position
@@ -68,6 +80,8 @@ func _physics_process(delta):
 			steering_evade(delta)
 		SteeringAlgorithm.FACE:
 			steering_face(delta)
+		SteeringAlgorithm.WANDER:
+			steering_wander(delta)
 
 func steering_align(delta: float) -> void:
 	var rotation_diff = target.rotation - rotation
@@ -155,6 +169,37 @@ func steering_evade(delta: float) -> void:
 
 func steering_face(delta: float) -> void:
 	var direction = target.global_position - global_position
+	if direction.length() == 0:
+		return
+	
+	var target_orientation = atan2(direction.y, direction.x)
+	steering_align_internal(target_orientation, delta)
+
+func steering_wander(delta: float) -> void:
+	# 1. Actualizar la orientación del wandering
+	wander_orientation += randf_range(-1, 1) * wander_rate
+	
+	# 2. Calcular la orientación combinada (relativa al personaje)
+	var target_orientation = wander_orientation + rotation
+	
+	# 3. Calcular el centro del círculo de wandering
+	var wander_circle_center = global_position + wander_offset * Vector2(cos(rotation), sin(rotation))
+	
+	# 4. Calcular la posición objetivo en el círculo
+	wander_target = wander_circle_center + wander_radius * Vector2(cos(target_orientation), sin(target_orientation))
+	
+	# 5. Usar Face para orientarse hacia el objetivo
+	steering_face_wander(delta)
+	
+	# 6. Establecer aceleración lineal en la dirección de la orientación actual
+	var direction = Vector2(cos(rotation), sin(rotation))
+	linear_velocity += direction * max_linear_acceleration * delta
+	
+	if linear_velocity.length() > wander_max_speed:
+		linear_velocity = linear_velocity.normalized() * wander_max_speed
+
+func steering_face_wander(delta: float) -> void:
+	var direction = wander_target - global_position
 	if direction.length() == 0:
 		return
 	
