@@ -7,7 +7,7 @@ signal enemy_exited
 var screen_size
 
 func _ready():
-	position = get_viewport_rect().size / 2
+	#position = get_viewport_rect().size / 2
 	screen_size = get_viewport_rect().size
 
 func _process(delta):
