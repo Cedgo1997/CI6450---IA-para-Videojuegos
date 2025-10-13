@@ -1,14 +1,20 @@
 extends RigidBody2D
 
 enum SteeringAlgorithm {
-	STEERING_SEEK,   # Persigue usando aceleración (puede orbitar)
-	STEERING_FLEE    # Huye usando aceleración
+	STEERING_SEEK,
+	STEERING_FLEE,
+	STEERING_ARRIVE
 }
 
 @export var algorithm: SteeringAlgorithm = SteeringAlgorithm.STEERING_SEEK
 @export var max_speed = 200.0
 @export var max_acceleration = 100.0
 @export var rotation_speed = 8.0
+
+@export_group('Wandering Settings')
+@export var target_radius = 20.0
+@export var slow_radius = 120.0
+@export var time_to_target = 0.1
 
 var target: Node2D = null
 var current_velocity = Vector2.ZERO
@@ -30,9 +36,13 @@ func _physics_process(delta):
 	
 	match algorithm:
 		SteeringAlgorithm.STEERING_SEEK:
-			steering_output = steering_seek()
+			if target:
+				steering_output = steering_seek()
 		SteeringAlgorithm.STEERING_FLEE:
 			steering_output = steering_flee()
+		SteeringAlgorithm.STEERING_ARRIVE:
+			if target:
+				steering_output = steering_arrive(delta)
 	
 	current_velocity += steering_output * delta
 	
@@ -70,3 +80,26 @@ func steering_flee() -> Vector2:
 	result *= max_acceleration
 	
 	return result
+
+func steering_arrive(delta: float) -> Vector2:
+	if target == null:
+		return Vector2.ZERO
+
+	var direction = target.global_position - global_position
+	var distance = direction.length()
+
+	if distance < target_radius:
+		current_velocity = Vector2.ZERO
+		return Vector2.ZERO
+
+	var target_speed = max_speed
+	if distance < slow_radius:
+		target_speed = max_speed * (distance / slow_radius)
+
+	var target_velocity = direction.normalized() * target_speed
+
+	var acceleration = (target_velocity - current_velocity) / time_to_target
+	if acceleration.length() > max_acceleration:
+		acceleration = acceleration.normalized() * max_acceleration
+
+	return acceleration

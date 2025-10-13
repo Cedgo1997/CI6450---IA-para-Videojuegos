@@ -42,9 +42,6 @@ func _ready():
 	_start_new_wander_timer()
 
 func _physics_process(delta):
-	if target == null:
-		return
-	
 	var steering_velocity = Vector2.ZERO
 		
 	match algorithm:
