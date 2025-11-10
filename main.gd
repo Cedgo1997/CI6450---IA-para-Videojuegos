@@ -1,3 +1,4 @@
 extends Node2D
 func _ready():
-	$Music.play()
+	pass
+	#$Music.play()

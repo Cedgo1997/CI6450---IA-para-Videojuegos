@@ -10,9 +10,9 @@ enum SteeringAlgorithm {
 	WANDER
 }
 
-@export var algorithm: SteeringAlgorithm = SteeringAlgorithm.WANDER
-@export var max_angular_acceleration = 10.0
-@export var max_rotation_speed = 1
+@export var algorithm: SteeringAlgorithm = SteeringAlgorithm.ALIGN_AND_VELOCITY_MATCH
+@export var max_angular_acceleration = 5.0
+@export var max_rotation_speed = 3
 @export var angular_time_to_target = 0.1
 
 @export_group("Align Settings")

@@ -22,8 +22,6 @@ rotation = 4.712389
 position = Vector2(60, 440)
 rotation = 4.712389
 algorithm = 5
-max_angular_acceleration = 50.0
-max_rotation_speed = 20.0
 max_linear_acceleration = 400.0
 
 [node name="Enemy2" parent="." instance=ExtResource("3_p8ss5")]
@@ -31,7 +29,6 @@ position = Vector2(160, 440)
 rotation = 4.712389
 algorithm = 5
 max_angular_acceleration = 50.0
-max_rotation_speed = 20.0
 max_linear_acceleration = 400.0
 
 [node name="Enemy3" parent="." instance=ExtResource("3_p8ss5")]
@@ -39,7 +36,6 @@ position = Vector2(260, 440)
 rotation = 4.712389
 algorithm = 5
 max_angular_acceleration = 50.0
-max_rotation_speed = 20.0
 max_linear_acceleration = 400.0
 
 [node name="Enemy4" parent="." instance=ExtResource("3_p8ss5")]
@@ -47,7 +43,6 @@ position = Vector2(360, 440)
 rotation = 4.712389
 algorithm = 5
 max_angular_acceleration = 50.0
-max_rotation_speed = 20.0
 max_linear_acceleration = 400.0
 
 [node name="Enemy5" parent="." instance=ExtResource("3_p8ss5")]
@@ -55,7 +50,6 @@ position = Vector2(460, 440)
 rotation = 4.712389
 algorithm = 5
 max_angular_acceleration = 50.0
-max_rotation_speed = 20.0
 max_linear_acceleration = 400.0
 
 [node name="Enemy6" parent="." instance=ExtResource("3_p8ss5")]
@@ -63,7 +57,6 @@ position = Vector2(660, 40)
 rotation = 4.712389
 algorithm = 5
 max_angular_acceleration = 50.0
-max_rotation_speed = 20.0
 max_linear_acceleration = 400.0
 
 [node name="Enemy7" parent="." instance=ExtResource("3_p8ss5")]
@@ -71,7 +64,6 @@ position = Vector2(560, 40)
 rotation = 4.712389
 algorithm = 5
 max_angular_acceleration = 50.0
-max_rotation_speed = 20.0
 max_linear_acceleration = 400.0
 
 [node name="Enemy8" parent="." instance=ExtResource("3_p8ss5")]
@@ -79,7 +71,6 @@ position = Vector2(460, 40)
 rotation = 4.712389
 algorithm = 5
 max_angular_acceleration = 50.0
-max_rotation_speed = 20.0
 max_linear_acceleration = 400.0
 
 [node name="Enemy9" parent="." instance=ExtResource("3_p8ss5")]
@@ -87,7 +78,6 @@ position = Vector2(360, 40)
 rotation = 4.712389
 algorithm = 5
 max_angular_acceleration = 50.0
-max_rotation_speed = 20.0
 max_linear_acceleration = 400.0
 
 [node name="Enemy10" parent="." instance=ExtResource("3_p8ss5")]
@@ -95,7 +85,6 @@ position = Vector2(260, 40)
 rotation = 4.712389
 algorithm = 5
 max_angular_acceleration = 50.0
-max_rotation_speed = 20.0
 max_linear_acceleration = 400.0
 
 [node name="Camera2D" type="Camera2D" parent="."]

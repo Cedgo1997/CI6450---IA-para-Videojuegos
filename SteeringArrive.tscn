@@ -20,12 +20,11 @@ position = Vector2(360, 240)
 
 [node name="EnemyArrive" parent="." instance=ExtResource("4_tl4yu")]
 script = ExtResource("4_0x1dj")
-algorithm = 0
 max_acceleration = 100.0
 rotation_speed = 8.0
-target_radius = 20.0
-slow_radius = 120.0
-time_to_target = 0.1
+target_radius = 50.0
+slow_radius = 100.0
+time_to_target = 1.0
 
 [node name="Camera2D" type="Camera2D" parent="."]
 position = Vector2(360, 240)

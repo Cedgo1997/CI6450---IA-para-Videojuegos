@@ -14,70 +14,35 @@ offset_bottom = 480.0
 color = Color(0.39114353, 0.57996243, 0.24716915, 1)
 
 [node name="Enemy" parent="." instance=ExtResource("3_vrts5")]
-position = Vector2(68, 241)
+position = Vector2(57, 185)
 rotation = 4.712389
 algorithm = 6
 use_look_where_youre_going = false
 wander_max_speed = 25.0
 
 [node name="Enemy2" parent="." instance=ExtResource("3_vrts5")]
-position = Vector2(122, 240)
+position = Vector2(247, 192)
 rotation = 4.712389
 algorithm = 6
 use_look_where_youre_going = false
 wander_max_speed = 25.0
 
 [node name="Enemy3" parent="." instance=ExtResource("3_vrts5")]
-position = Vector2(176, 238)
+position = Vector2(150, 189)
 rotation = 4.712389
 algorithm = 6
 use_look_where_youre_going = false
 wander_max_speed = 25.0
 
 [node name="Enemy4" parent="." instance=ExtResource("3_vrts5")]
-position = Vector2(220, 240)
+position = Vector2(339, 193)
 rotation = 4.712389
 algorithm = 6
 use_look_where_youre_going = false
 wander_max_speed = 25.0
 
 [node name="Enemy5" parent="." instance=ExtResource("3_vrts5")]
-position = Vector2(280, 240)
-rotation = 4.712389
-algorithm = 6
-use_look_where_youre_going = false
-wander_max_speed = 25.0
-
-[node name="Enemy6" parent="." instance=ExtResource("3_vrts5")]
-position = Vector2(342, 243)
-rotation = 4.712389
-algorithm = 6
-use_look_where_youre_going = false
-wander_max_speed = 25.0
-
-[node name="Enemy7" parent="." instance=ExtResource("3_vrts5")]
-position = Vector2(400, 240)
-rotation = 4.712389
-algorithm = 6
-use_look_where_youre_going = false
-wander_max_speed = 25.0
-
-[node name="Enemy8" parent="." instance=ExtResource("3_vrts5")]
-position = Vector2(460, 240)
-rotation = 4.712389
-algorithm = 6
-use_look_where_youre_going = false
-wander_max_speed = 25.0
-
-[node name="Enemy9" parent="." instance=ExtResource("3_vrts5")]
-position = Vector2(515, 244)
-rotation = 4.712389
-algorithm = 6
-use_look_where_youre_going = false
-wander_max_speed = 25.0
-
-[node name="Enemy10" parent="." instance=ExtResource("3_vrts5")]
-position = Vector2(568, 243)
+position = Vector2(434, 195)
 rotation = 4.712389
 algorithm = 6
 use_look_where_youre_going = false

@@ -24,7 +24,7 @@ position = Vector2(360, 240)
 [node name="Enemy_2" parent="." instance=ExtResource("3_gd55n")]
 script = ExtResource("4_xcv0v")
 algorithm = 0
-max_acceleration = 100.0
+max_acceleration = 300.0
 rotation_speed = 8.0
 target_radius = 20.0
 slow_radius = 120.0

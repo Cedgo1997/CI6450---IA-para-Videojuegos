@@ -8,7 +8,7 @@ enum SteeringAlgorithm {
 @export var algorithm: SteeringAlgorithm = SteeringAlgorithm.WANDER
 
 @export_group("Wander Settings")
-@export var wander_offset = 100.0
+@export var wander_offset = 300.0
 @export var wander_radius = 50.0
 @export var wander_rate = 3.0
 @export var wander_max_speed = 150.0

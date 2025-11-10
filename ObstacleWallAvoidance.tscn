@@ -21,6 +21,7 @@ color = Color(0.39114353, 0.57996243, 0.24716915, 1)
 [node name="Enemy_3" parent="." instance=ExtResource("3_agyqe")]
 position = Vector2(126, 186)
 algorithm = 3
+enable_obstacle_avoidance = true
 
 [node name="Wall" parent="." instance=ExtResource("2_wksmj")]
 
@@ -38,38 +39,23 @@ rotation = 1.5707964
 [node name="Dung" parent="." groups=["obstacle"] instance=ExtResource("2_3ti2v")]
 position = Vector2(123, 96)
 
-[node name="Dung2" parent="." instance=ExtResource("2_3ti2v")]
-position = Vector2(222, 156)
-
 [node name="Dung3" parent="." instance=ExtResource("2_3ti2v")]
-position = Vector2(144, 265)
-
-[node name="Dung4" parent="." instance=ExtResource("2_3ti2v")]
-position = Vector2(339, 103)
+position = Vector2(170, 308)
 
 [node name="Dung5" parent="." instance=ExtResource("2_3ti2v")]
-position = Vector2(345, 223)
-
-[node name="Dung6" parent="." instance=ExtResource("2_3ti2v")]
-position = Vector2(494, 113)
+position = Vector2(393, 136)
 
 [node name="Dung7" parent="." instance=ExtResource("2_3ti2v")]
 position = Vector2(499, 240)
 
 [node name="Dung8" parent="." instance=ExtResource("2_3ti2v")]
-position = Vector2(457, 340)
-
-[node name="Dung9" parent="." instance=ExtResource("2_3ti2v")]
-position = Vector2(211, 368)
+position = Vector2(604, 86)
 
 [node name="Dung10" parent="." instance=ExtResource("2_3ti2v")]
 position = Vector2(340, 357)
 
 [node name="Dung11" parent="." instance=ExtResource("2_3ti2v")]
 position = Vector2(598, 357)
-
-[node name="Dung12" parent="." instance=ExtResource("2_3ti2v")]
-position = Vector2(95, 384)
 
 [node name="Camera2D" type="Camera2D" parent="."]
 position = Vector2(360, 240)

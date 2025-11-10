@@ -18,41 +18,48 @@ position = Vector2(60, 240)
 algorithm = 2
 max_speed = 50.0
 rotation_speed = 1.0
+max_rotation = 3.0
 
 [node name="EnemyWander2" parent="." instance=ExtResource("3_2jufu")]
+visible = false
 position = Vector2(160, 240)
 algorithm = 2
 max_speed = 50.0
 rotation_speed = 1.0
 
 [node name="EnemyWander3" parent="." instance=ExtResource("3_2jufu")]
+visible = false
 position = Vector2(260, 240)
 algorithm = 2
 max_speed = 50.0
 rotation_speed = 1.0
 
 [node name="EnemyWander4" parent="." instance=ExtResource("3_2jufu")]
+visible = false
 position = Vector2(360, 240)
 algorithm = 2
 max_speed = 50.0
 rotation_speed = 1.0
 
 [node name="EnemyWander5" parent="." instance=ExtResource("3_2jufu")]
+visible = false
 position = Vector2(460, 240)
 algorithm = 2
 max_speed = 50.0
 rotation_speed = 1.0
 
 [node name="EnemyWander6" parent="." instance=ExtResource("3_2jufu")]
+visible = false
 position = Vector2(560, 240)
 algorithm = 2
 max_speed = 50.0
 rotation_speed = 1.0
 
 [node name="EnemyWander7" parent="." instance=ExtResource("3_2jufu")]
+visible = false
 position = Vector2(660, 240)
 algorithm = 2
-max_speed = 50.0
+max_speed = 15.0
 rotation_speed = 1.0
 
 [node name="Camera2D" type="Camera2D" parent="."]
