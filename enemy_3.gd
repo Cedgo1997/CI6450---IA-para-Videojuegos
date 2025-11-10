@@ -241,19 +241,23 @@ func steering_look_where_youre_going(delta: float) -> void:
 	steering_align_internal(target_orientation, delta)
 
 func steering_align_internal(target_orientation: float, delta: float) -> void:
-	var rotation_diff = target_orientation - rotation
-	rotation_diff = map_to_range(rotation_diff)
+	var rotation_diff = angle_difference(rotation, target_orientation)
 	var rotation_size = abs(rotation_diff)
+	
 	if rotation_size < target_radius:
 		angular_velocity = 0
 		return
+	
 	var target_rotation_speed = max_rotation_speed
 	if rotation_size < slow_radius:
 		target_rotation_speed = max_rotation_speed * rotation_size / slow_radius
+	
 	target_rotation_speed *= sign(rotation_diff)
+	
 	var angular_acceleration = (target_rotation_speed - angular_velocity) / angular_time_to_target
 	if abs(angular_acceleration) > max_angular_acceleration:
 		angular_acceleration = sign(angular_acceleration) * max_angular_acceleration
+	
 	angular_velocity += angular_acceleration * delta
 
 func steering_arrive_internal(target_position: Vector2, _delta: float) -> Vector2:

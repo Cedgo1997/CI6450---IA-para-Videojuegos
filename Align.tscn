@@ -21,36 +21,42 @@ rotation = 4.712389
 [node name="Enemy_3" parent="." instance=ExtResource("3_2kfkm")]
 position = Vector2(160, 140)
 rotation = 4.712389
+algorithm = 0
 max_angular_acceleration = 50.0
 max_linear_acceleration = 400.0
 
 [node name="Enemy_4" parent="." instance=ExtResource("3_2kfkm")]
 position = Vector2(360, 40)
 rotation = 4.712389
+algorithm = 0
 max_angular_acceleration = 50.0
 max_linear_acceleration = 400.0
 
 [node name="Enemy_5" parent="." instance=ExtResource("3_2kfkm")]
 position = Vector2(360, 430)
 rotation = 4.712389
+algorithm = 0
 max_angular_acceleration = 50.0
 max_linear_acceleration = 400.0
 
 [node name="Enemy_6" parent="." instance=ExtResource("3_2kfkm")]
 position = Vector2(160, 340)
 rotation = 4.712389
+algorithm = 0
 max_angular_acceleration = 50.0
 max_linear_acceleration = 400.0
 
 [node name="Enemy_7" parent="." instance=ExtResource("3_2kfkm")]
 position = Vector2(560, 140)
 rotation = 4.712389
+algorithm = 0
 max_angular_acceleration = 50.0
 max_linear_acceleration = 400.0
 
 [node name="Enemy_8" parent="." instance=ExtResource("3_2kfkm")]
 position = Vector2(560, 340)
 rotation = 4.712389
+algorithm = 0
 max_angular_acceleration = 50.0
 max_linear_acceleration = 400.0
 
