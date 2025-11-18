@@ -1,11 +1,12 @@
-[gd_scene load_steps=7 format=3 uid="uid://c0g6r8bpn1le0"]
+[gd_scene load_steps=8 format=3 uid="uid://c0g6r8bpn1le0"]
 
-[ext_resource type="Script" uid="uid://cbh6kaox5b7v0" path="res://main.gd" id="1_uboxy"]
-[ext_resource type="PackedScene" uid="uid://cpd7qmb540grs" path="res://dung.tscn" id="2_3ti2v"]
-[ext_resource type="PackedScene" uid="uid://c5uyejrtyb4uk" path="res://player.tscn" id="2_ledeb"]
-[ext_resource type="PackedScene" uid="uid://nysdldd5dm0u" path="res://wall.tscn" id="2_wksmj"]
-[ext_resource type="PackedScene" uid="uid://dgot21w856jui" path="res://enemy_3.tscn" id="3_agyqe"]
+[ext_resource type="Script" uid="uid://cbh6kaox5b7v0" path="res://scripts/main.gd" id="1_uboxy"]
+[ext_resource type="PackedScene" uid="uid://cpd7qmb540grs" path="res://scenes/dung.tscn" id="2_3ti2v"]
+[ext_resource type="PackedScene" uid="uid://c5uyejrtyb4uk" path="res://scenes/player.tscn" id="2_ledeb"]
+[ext_resource type="PackedScene" uid="uid://nysdldd5dm0u" path="res://scenes/wall.tscn" id="2_wksmj"]
+[ext_resource type="PackedScene" uid="uid://dgot21w856jui" path="res://scenes/enemy_3.tscn" id="3_agyqe"]
 [ext_resource type="AudioStream" uid="uid://fmp824ckngfh" path="res://art/Insectoid Circuitry.mp3" id="3_wksmj"]
+[ext_resource type="Script" uid="uid://7tac0qkd3rxb" path="res://scripts/enemy_4.gd" id="4_ledeb"]
 
 [node name="ObstacleAvoid" type="Node2D"]
 script = ExtResource("1_uboxy")
@@ -18,10 +19,12 @@ color = Color(0.39114353, 0.57996243, 0.24716915, 1)
 
 [node name="Player" parent="." instance=ExtResource("2_ledeb")]
 
-[node name="Enemy_3" parent="." instance=ExtResource("3_agyqe")]
+[node name="Enemy_4" parent="." instance=ExtResource("3_agyqe")]
 position = Vector2(126, 186)
-algorithm = 3
-enable_obstacle_avoidance = true
+script = ExtResource("4_ledeb")
+algorithm = 1
+max_seek_speed = 200.0
+seek_acceleration = 300.0
 
 [node name="Wall" parent="." instance=ExtResource("2_wksmj")]
 

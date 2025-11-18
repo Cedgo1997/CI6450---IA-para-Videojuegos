@@ -1,8 +1,8 @@
 [gd_scene load_steps=5 format=3 uid="uid://bh588mlv8ck24"]
 
-[ext_resource type="Script" uid="uid://cbh6kaox5b7v0" path="res://main.gd" id="1_wjvkp"]
-[ext_resource type="PackedScene" uid="uid://c5uyejrtyb4uk" path="res://player.tscn" id="2_h4e3f"]
-[ext_resource type="PackedScene" uid="uid://dgot21w856jui" path="res://enemy_3.tscn" id="3_p8ss5"]
+[ext_resource type="Script" uid="uid://cbh6kaox5b7v0" path="res://scripts/main.gd" id="1_wjvkp"]
+[ext_resource type="PackedScene" uid="uid://c5uyejrtyb4uk" path="res://scenes/player.tscn" id="2_h4e3f"]
+[ext_resource type="PackedScene" uid="uid://dgot21w856jui" path="res://scenes/enemy_3.tscn" id="3_p8ss5"]
 [ext_resource type="AudioStream" uid="uid://fmp824ckngfh" path="res://art/Insectoid Circuitry.mp3" id="4_441o5"]
 
 [node name="Arrive" type="Node2D"]

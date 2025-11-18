@@ -1,4 +1,4 @@
-extends Area2D
+extends CharacterBody2D
 @export var speed = 300.0
 @export var rotation_speed = 10.0
 
@@ -7,11 +7,10 @@ signal enemy_exited
 var screen_size
 
 func _ready():
-	#position = get_viewport_rect().size / 2
 	screen_size = get_viewport_rect().size
 
-func _process(delta):
-	var velocity = Vector2.ZERO
+func _physics_process(delta):
+	velocity = Vector2.ZERO
 	
 	if Input.is_action_pressed("move_right"):
 		velocity.x += 1
@@ -23,14 +22,11 @@ func _process(delta):
 		velocity.y -= 1
 	
 	if velocity.length() > 0:
-		velocity = velocity.normalized()
-	
-	position += velocity * speed * delta
-	#position = position.clamp(Vector2.ZERO, screen_size)
-	
-	if velocity.length() > 0:
+		velocity = velocity.normalized() * speed
 		var target_rotation = velocity.angle()
 		rotation = lerp_angle(rotation, target_rotation, rotation_speed * delta)
+	
+	move_and_slide()
 
 
 func _on_body_entered(body: Node2D) -> void:

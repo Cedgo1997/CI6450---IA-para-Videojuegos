@@ -27,13 +27,12 @@ var is_touching_player = false
 
 var steering_behavior = null
 
-# ============= CLASE BASE =============
 class KinematicSteering:
-	var owner_node: RigidBody2D
+	var owner_node: Node2D
 	var target: Node2D
 	var max_speed: float
 	
-	func _init(owner: RigidBody2D, tgt: Node2D, spd: float):
+	func _init(owner: Node2D, tgt: Node2D, spd: float):
 		owner_node = owner
 		target = tgt
 		max_speed = spd
@@ -41,9 +40,8 @@ class KinematicSteering:
 	func calculate_steering() -> Vector2:
 		return Vector2.ZERO
 
-# ============= KINEMATIC SEEK =============
 class KinematicSeek extends KinematicSteering:
-	func _init(owner: RigidBody2D, tgt: Node2D, spd: float):
+	func _init(owner: Node2D, tgt: Node2D, spd: float):
 		super(owner, tgt, spd)
 	
 	func calculate_steering() -> Vector2:
@@ -57,14 +55,13 @@ class KinematicSeek extends KinematicSteering:
 		var velocity = direction * max_speed
 		return velocity
 
-# ============= KINEMATIC ARRIVE =============
 class KinematicArrive extends KinematicSteering:
 	var inner_radius: float
 	var outer_radius: float
 	var time_to_target: float
 	var is_touching_player: bool
 	
-	func _init(owner: RigidBody2D, tgt: Node2D, spd: float, inner_r: float, outer_r: float, ttt: float):
+	func _init(owner: Node2D, tgt: Node2D, spd: float, inner_r: float, outer_r: float, ttt: float):
 		super(owner, tgt, spd)
 		inner_radius = inner_r
 		outer_radius = outer_r
@@ -96,7 +93,6 @@ class KinematicArrive extends KinematicSteering:
 		
 		return velocity
 
-# ============= KINEMATIC WANDER =============
 class KinematicWander extends KinematicSteering:
 	var wander_orientation: float = 0.0
 	var wander_target_orientation: float = 0.0
@@ -106,7 +102,7 @@ class KinematicWander extends KinematicSteering:
 	var wander_max_turn_angle: float
 	var rotation_timer: Timer
 	
-	func _init(owner: RigidBody2D, tgt: Node2D, spd: float, min_rot: float, max_rot_limit: float, 
+	func _init(owner: Node2D, tgt: Node2D, spd: float, min_rot: float, max_rot_limit: float, 
 			   min_turn: float, max_turn: float, timer: Timer):
 		super(owner, tgt, spd)
 		min_rotation = min_rot
@@ -135,7 +131,6 @@ class KinematicWander extends KinematicSteering:
 		wander_target_orientation = wrapf(wander_orientation + turn_angle, -PI, PI)
 		_start_new_wander_timer()
 
-# ============= MÉTODOS PRINCIPALES =============
 func _ready():
 	var players = get_tree().get_nodes_in_group("player")
 	if players.size() > 0:

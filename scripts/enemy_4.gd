@@ -99,7 +99,7 @@ func steering_obstacle_avoidance(delta: float) -> void:
 	
 	if collision_info != null:
 		var target_position = collision_info.position + collision_info.normal * avoid_distance
-		acceleration = steering_seek_internal(target_position, delta)
+		acceleration = steering_seek_internal(target_position)
 	else:
 		var direction = linear_velocity.normalized()
 		acceleration = direction * max_linear_acceleration * 0.3
@@ -118,7 +118,7 @@ func steering_obstacle_avoidance(delta: float) -> void:
 	
 	steering_look_where_youre_going(delta)
 
-func detect_collision_multi_ray(base_direction: Vector2, ray_length: float) -> Dictionary:
+func detect_collision_multi_ray(base_direction: Vector2, ray_length: float):
 	var space_state = get_world_2d().direct_space_state
 	var closest_collision = null
 	var min_distance = INF
@@ -148,7 +148,7 @@ func detect_collision_multi_ray(base_direction: Vector2, ray_length: float) -> D
 	
 	return closest_collision
 
-func steering_seek_internal(target_position: Vector2, delta: float) -> Vector2:
+func steering_seek_internal(target_position: Vector2) -> Vector2:
 	var direction = target_position - global_position
 	var distance = direction.length()
 	
