@@ -748,4 +748,3 @@ static func map_to_range(angle: float) -> float:
 static func angle_difference(from_angle: float, to_angle: float) -> float:
 	var diff = to_angle - from_angle
 	return map_to_range(diff)
-

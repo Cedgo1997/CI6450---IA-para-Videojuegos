@@ -7,9 +7,9 @@
 
 [sub_resource type="Curve2D" id="Curve2D_00b7p"]
 _data = {
-"points": PackedVector2Array(0, 0, 0, 0, 123, 164, 0, 0, 0, 0, 580, 156, 0, 0, 0, 0, 583, 320, 0, 0, 0, 0, 126, 336, 0, 0, 0, 0, 123, 164)
+"points": PackedVector2Array(0, 0, 0, 0, 144, 326, 0, 0, 0, 0, 409, 112, 0, 0, 0, 0, 614, 411, 0, 0, 0, 0, 144, 326)
 }
-point_count = 5
+point_count = 4
 
 [node name="Arrive" type="Node2D"]
 script = ExtResource("1_mdt7p")
@@ -21,12 +21,13 @@ offset_bottom = 480.0
 color = Color(0.39114353, 0.57996243, 0.24716915, 1)
 
 [node name="Follower" parent="." instance=ExtResource("2_00b7p")]
-position = Vector2(122, 165)
+position = Vector2(329, 34)
 script = ExtResource("3_mdt7p")
 max_speed = 100.0
 max_acceleration = 500.0
 rotation_speed = 8.0
 path_offset = 1.0
+pathGroup = "enemy_path"
 
 [node name="Camera2D" type="Camera2D" parent="."]
 position = Vector2(360, 240)

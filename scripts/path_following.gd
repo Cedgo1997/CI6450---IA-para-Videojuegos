@@ -8,6 +8,7 @@ const EnemyScript = preload("res://scripts/enemy.gd")
 
 @export_group('Path Following Settings')
 @export var path_offset = 1.0
+@export var pathGroup = "enemy_path";
 
 var path: Path2D = null
 var current_velocity = Vector2.ZERO
@@ -149,11 +150,11 @@ class FollowPath:
 		return seek_behavior.calculate_steering()
 
 func _ready():
-	var paths = get_tree().get_nodes_in_group("enemy_path")
+	var paths = get_tree().get_nodes_in_group(pathGroup)
 	if paths.size() > 0:
 		path = paths[0]
 	else:
-		push_error("No se encontró ningún Path2D en el grupo 'enemy_path'")
+		push_error("No se encontró ningún Path2D en el grupo 'pathGroup'")
 		return
 	
 	lock_rotation = false
