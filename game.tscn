@@ -1,0 +1,18 @@
+[gd_scene load_steps=3 format=3 uid="uid://2ndqmh48gg6u"]
+
+[ext_resource type="PackedScene" uid="uid://c5uyejrtyb4uk" path="res://scenes/player.tscn" id="1_e2o6t"]
+[ext_resource type="PackedScene" uid="uid://bpbip0j5fsspu" path="res://world/world.tscn" id="2_feb5d"]
+
+[node name="Game" type="Node2D"]
+
+[node name="Player" parent="." instance=ExtResource("1_e2o6t")]
+position = Vector2(211, 647)
+scale = Vector2(0.5, 0.5)
+collision_layer = 2
+collision_mask = 3
+
+[node name="World" parent="." instance=ExtResource("2_feb5d")]
+position = Vector2(-96, 82)
+
+[node name="Camera2D" type="Camera2D" parent="."]
+position = Vector2(361, 244)
