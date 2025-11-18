@@ -4,15 +4,15 @@
 [ext_resource type="Texture2D" uid="uid://bo6d5v3aere44" path="res://art/dung.png" id="1_w6gjr"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_1ynad"]
-radius = 25.019993
+radius = 22.0
 
-[node name="Dung" type="RigidBody2D"]
-gravity_scale = 0.0
+[node name="Dung" type="CharacterBody2D"]
 script = ExtResource("1_ax4h0")
+speed = 100.0
 metadata/_edit_group_ = true
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
-scale = Vector2(0.22566369, 0.22566369)
+scale = Vector2(0.2, 0.2)
 texture = ExtResource("1_w6gjr")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
