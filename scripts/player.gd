@@ -5,9 +5,12 @@ extends CharacterBody2D
 signal enemy_entered
 signal enemy_exited
 var screen_size
+var apple_scene = preload("res://scenes/apple.tscn")
 
 func _ready():
 	screen_size = get_viewport_rect().size
+	if Input.is_action_just_pressed("ui_accept"):
+		drop_apple()
 
 func _physics_process(delta):
 	velocity = Vector2.ZERO
@@ -36,3 +39,8 @@ func _on_body_entered(body: Node2D) -> void:
 func _on_body_exited(body: Node2D) -> void:
 	if body.is_in_group("enemy"):
 		enemy_exited.emit()
+		
+func drop_apple():
+	var apple = apple_scene.instantiate()
+	apple.global_position = global_position
+	get_tree().root.add_child(apple)
