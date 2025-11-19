@@ -7,10 +7,12 @@ signal enemy_exited
 var screen_size
 var apple_scene = preload("res://scenes/apple.tscn")
 
-func _ready():
-	screen_size = get_viewport_rect().size
+func _process(_delta: float) -> void:
 	if Input.is_action_just_pressed("ui_accept"):
 		drop_apple()
+
+func _ready():
+	screen_size = get_viewport_rect().size
 
 func _physics_process(delta):
 	velocity = Vector2.ZERO

@@ -13,7 +13,7 @@ func _on_drop_timer_timeout() -> void:
 	current_apple = apple.instantiate()
 	get_parent().add_child(current_apple)
 	
-	current_apple.global_position = position + Vector2(50, 45)
+	current_apple.global_position = position + Vector2(70, 65)
 	apple_ripe_timer.start()
 	
 	drop_timer.stop()
