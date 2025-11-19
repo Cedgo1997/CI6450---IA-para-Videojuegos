@@ -1,6 +1,7 @@
 extends CharacterBody2D
 
 const EnemyBehavior = preload("res://scripts/enemy_behavior.gd")
+@onready var item_detector = $SightArea
 
 @export var max_speed: float = 200.0
 @export var max_acceleration: float = 100.0
@@ -11,9 +12,13 @@ const EnemyBehavior = preload("res://scripts/enemy_behavior.gd")
 @export var pathGroup: String = "npc_path"
 @export var patrol_path: Path2D = null
 
+var target_apple = null
+var apples_in_range = []
+
 enum State {
 	PATROL,
-	FACE
+	FACE,
+	CHASE_APPLE
 }
 
 var current_state: State = State.PATROL
@@ -25,6 +30,8 @@ var current_param: float = 0.0
 var face_behavior: EnemyBehavior.RotationalBehavior = null
 var current_angular_velocity: float = 0.0
 var player_in_sight: bool = false
+var apple_seek_behavior: SteeringSeek = null
+var apple_virtual_target: Node2D = null
 
 class Path:
 	var path_node: Path2D
@@ -150,6 +157,10 @@ class FollowPath:
 func _ready():
 	print("\n[NPC] Inicializando NPC...")
 	player = get_tree().get_first_node_in_group("player")
+	item_detector.body_entered.connect(_on_apple_detected)
+	item_detector.area_entered.connect(_on_apple_detected)
+	item_detector.body_exited.connect(_on_apple_lost)
+	item_detector.area_exited.connect(_on_apple_lost)
 	
 	if player:
 		print("[NPC] Player encontrado: ", player.name)
@@ -172,6 +183,11 @@ func _ready():
 	
 	face_behavior = EnemyBehavior.RotationalBehavior.new(self, 5.0, 3.0, 0.1, 0.01, 0.5)
 	print("[NPC] Face behavior inicializado")
+	
+	apple_virtual_target = Node2D.new()
+	add_child(apple_virtual_target)
+	apple_seek_behavior = SteeringSeek.new(self, apple_virtual_target, max_speed, max_acceleration)
+	print("[NPC] Apple seek behavior inicializado")
 	
 	var sight_area = get_node_or_null("SightArea")
 	if sight_area:
@@ -198,6 +214,8 @@ func _physics_process(delta):
 			_process_patrol_state(delta)
 		State.FACE:
 			_process_face_state(delta)
+		State.CHASE_APPLE:
+			_process_chasing_apple_state(delta)
 
 func _process_patrol_state(delta):
 	if not patrol_path or not follow_path_behavior:
@@ -237,6 +255,8 @@ func _on_sight_body_entered(body: Node2D):
 		print("🔴 CAMBIO DE ESTADO: PATROL → FACE")
 		print("══════════════════════════════════════")
 		current_state = State.FACE
+	if body.is_in_group("pickable"):
+		current_state = State.CHASE_APPLE
 
 func _on_sight_body_exited(body: Node2D):
 	print("[NPC] Body exited sight: ", body.name, " | Is player: ", body.is_in_group("player"))
@@ -247,6 +267,72 @@ func _on_sight_body_exited(body: Node2D):
 		print("🟢 CAMBIO DE ESTADO: FACE → PATROL")
 		print("══════════════════════════════════════")
 		current_state = State.PATROL
+	if body.is_in_group("pickable"):
+		current_state = State.PATROL
+		
+func _process_chasing_apple_state(delta):
+	if target_apple == null or not is_instance_valid(target_apple):
+		change_to_player_chase()
+		return
+	
+	apple_virtual_target.global_position = target_apple.global_position
+	
+	var steering_output = apple_seek_behavior.calculate_steering()
+	current_velocity += steering_output * delta
+	
+	if current_velocity.length() > max_speed:
+		current_velocity = current_velocity.normalized() * max_speed
+	
+	velocity = current_velocity
+	move_and_slide()
+	
+	if current_velocity.length() > 0:
+		var target_rotation = current_velocity.angle()
+		rotation = lerp_angle(rotation, target_rotation, rotation_speed * delta)
+	
+	if global_position.distance_to(target_apple.global_position) < 15.0:
+		print("¡Llegué a la manzana!")
+		target_apple = null
+		change_to_player_chase()
+
+func change_to_player_chase():
+	current_state = State.PATROL
+	target_apple = null
+	apples_in_range.clear()
+	
+func _on_apple_detected(area):
+	if area.is_in_group("pickable"):
+		print("¡Manzana detectada!")
+		apples_in_range.append(area)
+		update_target_apple()
+
+func _on_apple_lost(area):
+	if area.is_in_group("pickable"):
+		print("Manzana salió del rango")
+		apples_in_range.erase(area)
+		
+		if area == target_apple:
+			update_target_apple()
+
+func update_target_apple():
+	if apples_in_range.is_empty():
+		change_to_player_chase()
+		return
+	
+	var closest_apple = null
+	var closest_distance = INF
+	
+	for apple in apples_in_range:
+		if is_instance_valid(apple):
+			var distance = global_position.distance_to(apple.global_position)
+			if distance < closest_distance:
+				closest_distance = distance
+				closest_apple = apple
+	
+	if closest_apple != null:
+		target_apple = closest_apple
+		current_state = State.CHASE_APPLE
+		print("Cambiando objetivo a manzana en: ", target_apple.global_position)
 
 func _on_timer_timeout():
 	pass

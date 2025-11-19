@@ -1,9 +1,10 @@
-[gd_scene load_steps=6 format=3 uid="uid://2ndqmh48gg6u"]
+[gd_scene load_steps=7 format=3 uid="uid://2ndqmh48gg6u"]
 
 [ext_resource type="PackedScene" uid="uid://c5uyejrtyb4uk" path="res://scenes/player.tscn" id="1_e2o6t"]
 [ext_resource type="PackedScene" uid="uid://bpbip0j5fsspu" path="res://world/world.tscn" id="2_feb5d"]
 [ext_resource type="PackedScene" uid="uid://cfshl43alfx02" path="res://scenes/npc_2.tscn" id="3_fc0e3"]
 [ext_resource type="PackedScene" uid="uid://cpd7qmb540grs" path="res://scenes/dung.tscn" id="3_feb5d"]
+[ext_resource type="PackedScene" uid="uid://bmihvde6c5d4e" path="res://scenes/tree.tscn" id="4_7jktm"]
 
 [sub_resource type="Curve2D" id="Curve2D_fc0e3"]
 _data = {
@@ -22,11 +23,14 @@ scale = Vector2(0.5, 0.5)
 collision_layer = 2
 collision_mask = 3
 
-[node name="npc_2" parent="World" instance=ExtResource("3_fc0e3")]
+[node name="Watchman" parent="World" instance=ExtResource("3_fc0e3")]
 position = Vector2(16, -72)
 
 [node name="Path2D" type="Path2D" parent="World" groups=["npc_path"]]
 curve = SubResource("Curve2D_fc0e3")
+
+[node name="Tree" parent="World" instance=ExtResource("4_7jktm")]
+position = Vector2(70, -19)
 
 [node name="Camera2D" type="Camera2D" parent="."]
 position = Vector2(361, 244)

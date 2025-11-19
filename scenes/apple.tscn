@@ -4,15 +4,14 @@
 [ext_resource type="Texture2D" uid="uid://bs67p5f2nm00l" path="res://art/apple-icon.png" id="2_n78qv"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_n78qv"]
-radius = 12.0415945
 
-[node name="Apple" type="Area2D"]
+[node name="Apple" type="Area2D" groups=["pickable"]]
 script = ExtResource("1_3ed3y")
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
-position = Vector2(0, -2)
-scale = Vector2(3.3125, 3.3125)
+scale = Vector2(2.78125, 2.78125)
 texture = ExtResource("2_n78qv")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(0, 3)
 shape = SubResource("CircleShape2D_n78qv")

@@ -4,21 +4,21 @@
 [ext_resource type="Script" uid="uid://oqicmdd2bnm1" path="res://scripts/tree.gd" id="1_nnvrw"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_brfkd"]
-size = Vector2(59, 76)
+size = Vector2(17, 14)
 
 [node name="Tree" type="RigidBody2D"]
 gravity_scale = 0.0
 script = ExtResource("1_nnvrw")
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
-position = Vector2(30, 38)
-scale = Vector2(2.3, 2.2999997)
+position = Vector2(15.625, 19.600002)
+scale = Vector2(1.15, 1.1499999)
 texture = ExtResource("1_brfkd")
 region_enabled = true
 region_rect = Rect2(48, 2.026, 25, 32.837)
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
-position = Vector2(29.5, 38)
+position = Vector2(15.5, 32)
 shape = SubResource("RectangleShape2D_brfkd")
 
 [node name="DropTimer" type="Timer" parent="."]
