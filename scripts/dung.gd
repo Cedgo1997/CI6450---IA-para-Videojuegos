@@ -5,7 +5,7 @@ extends CharacterBody2D
 
 var current_index = 0
 
-func _physics_process(delta: float) -> void:
+func _physics_process(_delta: float) -> void:
 		var min_distance = 5.0
 		var target_position = waypoints[current_index].global_position
 		var direction = target_position - global_position

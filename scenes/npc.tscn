@@ -1,0 +1,43 @@
+[gd_scene load_steps=5 format=3 uid="uid://bh2j6swxlrye8"]
+
+[ext_resource type="Script" uid="uid://de2x8bchik460" path="res://scripts/npc.gd" id="1_8xp2k"]
+[ext_resource type="Texture2D" uid="uid://cv8egxtciwh8v" path="res://art/beetle-2.png" id="2_rv78h"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_abqhh"]
+radius = 19.0
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_rv78h"]
+radius = 69.0
+
+[node name="npc" type="CharacterBody2D" groups=["npc"]]
+motion_mode = 1
+wall_min_slide_angle = 0.0
+safe_margin = 5.0
+script = ExtResource("1_8xp2k")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+rotation = 1.5707964
+scale = Vector2(0.13326547, 0.13326547)
+texture = ExtResource("2_rv78h")
+
+[node name="Collider" type="CollisionShape2D" parent="."]
+shape = SubResource("CircleShape2D_abqhh")
+
+[node name="Timer" type="Timer" parent="."]
+wait_time = 0.5
+autostart = true
+
+[node name="NavigationAgent2D" type="NavigationAgent2D" parent="."]
+path_desired_distance = 500.0
+avoidance_enabled = true
+debug_enabled = true
+
+[node name="SightArea" type="Area2D" parent="."]
+collision_layer = 0
+collision_mask = 1
+
+[node name="Sight" type="CollisionShape2D" parent="SightArea" groups=["sight"]]
+shape = SubResource("CircleShape2D_rv78h")
+debug_color = Color(0.6177798, 0.4668156, 0.69758385, 0.42)
+
+[connection signal="timeout" from="Timer" to="." method="_on_timer_timeout"]

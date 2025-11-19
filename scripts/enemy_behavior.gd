@@ -271,7 +271,7 @@ class RotationalBehavior:
 		slow_radius = slw_rad
 	
 	## Alinear con una orientación objetivo
-	func align_to_orientation(target_orientation: float, current_angular_velocity: float, delta: float) -> float:
+	func align_to_orientation(target_orientation: float, current_angular_velocity: float, _delta: float) -> float:
 		var rotation_diff = angle_difference(owner_node.rotation, target_orientation)
 		var rotation_size = abs(rotation_diff)
 		

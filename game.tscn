@@ -1,19 +1,32 @@
-[gd_scene load_steps=4 format=3 uid="uid://2ndqmh48gg6u"]
+[gd_scene load_steps=6 format=3 uid="uid://2ndqmh48gg6u"]
 
 [ext_resource type="PackedScene" uid="uid://c5uyejrtyb4uk" path="res://scenes/player.tscn" id="1_e2o6t"]
 [ext_resource type="PackedScene" uid="uid://bpbip0j5fsspu" path="res://world/world.tscn" id="2_feb5d"]
+[ext_resource type="PackedScene" uid="uid://cfshl43alfx02" path="res://scenes/npc_2.tscn" id="3_fc0e3"]
 [ext_resource type="PackedScene" uid="uid://cpd7qmb540grs" path="res://scenes/dung.tscn" id="3_feb5d"]
+
+[sub_resource type="Curve2D" id="Curve2D_fc0e3"]
+_data = {
+"points": PackedVector2Array(0, 0, 0, 0, 18, -72, 0, 0, 0, 0, 156, -71, 0, 0, 0, 0, 159, 77, 0, 0, 0, 0, 18, 77, 0, 0, 0, 0, 18, -72)
+}
+point_count = 5
 
 [node name="Game" type="Node2D"]
 
-[node name="Player" parent="." instance=ExtResource("1_e2o6t")]
-position = Vector2(211, 647)
+[node name="World" parent="." instance=ExtResource("2_feb5d")]
+position = Vector2(-96, 82)
+
+[node name="Player" parent="World" instance=ExtResource("1_e2o6t")]
+position = Vector2(307, 565)
 scale = Vector2(0.5, 0.5)
 collision_layer = 2
 collision_mask = 3
 
-[node name="World" parent="." instance=ExtResource("2_feb5d")]
-position = Vector2(-96, 82)
+[node name="npc_2" parent="World" instance=ExtResource("3_fc0e3")]
+position = Vector2(16, -72)
+
+[node name="Path2D" type="Path2D" parent="World" groups=["npc_path"]]
+curve = SubResource("Curve2D_fc0e3")
 
 [node name="Camera2D" type="Camera2D" parent="."]
 position = Vector2(361, 244)
@@ -23,7 +36,6 @@ position = Vector2(361, 244)
 [node name="Dung" parent="Obstacle_1" node_paths=PackedStringArray("waypoints") instance=ExtResource("3_feb5d")]
 position = Vector2(256.99997, 436.99997)
 rotation = 1.5529411
-speed = 100.0
 waypoints = [NodePath("../Waypoints/Waypoint"), NodePath("../Waypoints/Waypoint2")]
 
 [node name="Waypoints" type="Node2D" parent="Obstacle_1"]
