@@ -8,7 +8,7 @@
 
 [sub_resource type="Curve2D" id="Curve2D_fc0e3"]
 _data = {
-"points": PackedVector2Array(0, 0, 0, 0, 18, -72, 0, 0, 0, 0, 156, -71, 0, 0, 0, 0, 159, 77, 0, 0, 0, 0, 18, 77, 0, 0, 0, 0, 18, -72)
+"points": PackedVector2Array(-9.63858, 8.096407, 9.63858, -8.096407, 16, -72, -11.566296, -10.024123, 11.566296, 10.024123, 159, -70, 14.650641, -12.722925, -14.650641, 12.722925, 162, 80, 14.265099, 11.951839, -14.265099, -11.951839, 13, 82, -10.79521, 13.494012, 10.79521, -13.494012, 16, -72)
 }
 point_count = 5
 
@@ -23,10 +23,14 @@ scale = Vector2(0.5, 0.5)
 collision_layer = 2
 collision_mask = 3
 
-[node name="Watchman" parent="World" instance=ExtResource("3_fc0e3")]
-position = Vector2(16, -72)
+[node name="Watchman" parent="World" node_paths=PackedStringArray("patrol_path") instance=ExtResource("3_fc0e3")]
+position = Vector2(34, -82)
+max_acceleration = 300.0
+path_offset = 20.0
+patrol_path = NodePath("../Path2D")
 
 [node name="Path2D" type="Path2D" parent="World" groups=["npc_path"]]
+visible = false
 curve = SubResource("Curve2D_fc0e3")
 
 [node name="Tree" parent="World" instance=ExtResource("4_7jktm")]
