@@ -36,8 +36,7 @@ path_desired_distance = 500.0
 avoidance_enabled = true
 debug_enabled = true
 
-[node name="SightArea" type="Area2D" parent="."]
-collision_layer = 0
+[node name="SightArea" type="Area2D" parent="." groups=["npc"]]
 collision_mask = 3
 
 [node name="Sight" type="CollisionShape2D" parent="SightArea" groups=["sight"]]
