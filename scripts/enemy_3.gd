@@ -1,16 +1,8 @@
 extends RigidBody2D
 
-enum SteeringAlgorithm {
-	ALIGN,
-	VELOCITY_MATCH,
-	ALIGN_AND_VELOCITY_MATCH,
-	PURSUE,
-	EVADE,
-	FACE,
-	WANDER
-}
+const EnemyEnums = preload("res://scripts/enums/enemy_enums.gd")
 
-@export var algorithm: SteeringAlgorithm = SteeringAlgorithm.ALIGN_AND_VELOCITY_MATCH
+@export var algorithm: EnemyEnums.AdvancedSteeringAlgorithm = EnemyEnums.AdvancedSteeringAlgorithm.ALIGN_AND_VELOCITY_MATCH
 @export var max_angular_acceleration = 5.0
 @export var max_rotation_speed = 3
 @export var angular_time_to_target = 0.1
@@ -68,27 +60,27 @@ func _ready():
 	wander_orientation = rotation
 
 func _physics_process(delta):
-	if target == null and algorithm != SteeringAlgorithm.WANDER:
+	if target == null and algorithm != EnemyEnums.AdvancedSteeringAlgorithm.WANDER:
 		return
 	if target and delta > 0:
 		var current_target_position = target.global_position
 		target_velocity = (current_target_position - previous_target_position) / delta
 		previous_target_position = current_target_position
 	match algorithm:
-		SteeringAlgorithm.ALIGN:
+		EnemyEnums.AdvancedSteeringAlgorithm.ALIGN:
 			steering_align(delta)
-		SteeringAlgorithm.VELOCITY_MATCH:
+		EnemyEnums.AdvancedSteeringAlgorithm.VELOCITY_MATCH:
 			steering_velocity_match(delta)
-		SteeringAlgorithm.ALIGN_AND_VELOCITY_MATCH:
+		EnemyEnums.AdvancedSteeringAlgorithm.ALIGN_AND_VELOCITY_MATCH:
 			steering_align(delta)
 			steering_velocity_match(delta)
-		SteeringAlgorithm.PURSUE:
+		EnemyEnums.AdvancedSteeringAlgorithm.PURSUE:
 			steering_pursue(delta)
-		SteeringAlgorithm.EVADE:
+		EnemyEnums.AdvancedSteeringAlgorithm.EVADE:
 			steering_evade(delta)
-		SteeringAlgorithm.FACE:
+		EnemyEnums.AdvancedSteeringAlgorithm.FACE:
 			steering_face(delta)
-		SteeringAlgorithm.WANDER:
+		EnemyEnums.AdvancedSteeringAlgorithm.WANDER:
 			steering_wander(delta)
 
 func steering_wander(delta: float) -> void:

@@ -1,12 +1,8 @@
 extends RigidBody2D
 
-enum SteeringAlgorithm {
-	SEEK,
-	ARRIVE,
-	WANDER
-}
+const EnemyEnums = preload("res://scripts/enums/enemy_enums.gd")
 
-@export var algorithm: SteeringAlgorithm = SteeringAlgorithm.ARRIVE
+@export var algorithm: EnemyEnums.KinematicAlgorithm = EnemyEnums.KinematicAlgorithm.ARRIVE
 @export var max_speed = 100.0
 @export var rotation_speed = 8.0
 
@@ -144,12 +140,12 @@ func _ready():
 
 func _initialize_steering_behavior():
 	match algorithm:
-		SteeringAlgorithm.SEEK:
+		EnemyEnums.KinematicAlgorithm.SEEK:
 			steering_behavior = KinematicSeek.new(self, target, max_speed)
-		SteeringAlgorithm.ARRIVE:
+		EnemyEnums.KinematicAlgorithm.ARRIVE:
 			steering_behavior = KinematicArrive.new(self, target, max_speed, 
 													inner_radius, outer_radius, time_to_target)
-		SteeringAlgorithm.WANDER:
+		EnemyEnums.KinematicAlgorithm.WANDER:
 			steering_behavior = KinematicWander.new(self, target, max_speed, 
 													min_rotation, max_rotation_limit,
 													wander_min_turn_angle, wander_max_turn_angle,
@@ -162,7 +158,7 @@ func _physics_process(delta):
 	var steering_velocity = steering_behavior.calculate_steering()
 	linear_velocity = steering_velocity
 	
-	if algorithm != SteeringAlgorithm.WANDER and steering_velocity.length() > 0:
+	if algorithm != EnemyEnums.KinematicAlgorithm.WANDER and steering_velocity.length() > 0:
 		var target_rotation = steering_velocity.angle()
 		rotation = lerp_angle(rotation, target_rotation, rotation_speed * delta)
 

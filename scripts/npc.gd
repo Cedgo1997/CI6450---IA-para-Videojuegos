@@ -1,11 +1,16 @@
 extends CharacterBody2D
 
 const EnemyBehavior = preload("res://scripts/enemy_behavior.gd")
+const NPCEnums = preload("res://scripts/enums/npc_enums.gd")
+
 @onready var item_detector = $SightArea
 
 @export var max_speed: float = 200.0
 @export var max_acceleration: float = 100.0
 @export var rotation_speed: float = 8.0
+
+@export_group('Role Settings')
+@export var role: NPCEnums.Role = NPCEnums.Role.PATROLMAN
 
 @export_group('Path Following Settings')
 @export var path_offset: float = 5.0
@@ -15,14 +20,8 @@ const EnemyBehavior = preload("res://scripts/enemy_behavior.gd")
 var target_apple = null
 var apples_in_range = []
 
-enum State {
-	PATROL,
-	FACE,
-	CHASE_APPLE
-}
-
-var current_state: State = State.PATROL
-var previous_state: State = State.PATROL
+var current_state: NPCEnums.State = NPCEnums.State.PATROL
+var previous_state: NPCEnums.State = NPCEnums.State.PATROL
 var player: CharacterBody2D = null
 var path_wrapper: Path = null
 var follow_path_behavior: FollowPath = null
@@ -196,32 +195,50 @@ func _initialize_path_following():
 	follow_path_behavior.current_param = closest_param + 0.5
 
 func _physics_process(delta):
+	match role:
+		NPCEnums.Role.PATROLMAN:
+			_process_patrolman_behavior(delta)
+		NPCEnums.Role.GUARD:
+			_process_guard_behavior(delta)
+
+func _process_patrolman_behavior(delta):
 	_update_state()
 	
 	match current_state:
-		State.PATROL:
+		NPCEnums.State.PATROL:
 			_process_patrol_state(delta)
-		State.FACE:
+		NPCEnums.State.FACE:
 			_process_face_state(delta)
-		State.CHASE_APPLE:
+		NPCEnums.State.CHASE_APPLE:
 			_process_chasing_apple_state(delta)
+
+func _process_guard_behavior(delta):
+	_update_state()
+	
+	match current_state:
+		NPCEnums.State.PATROL:
+			_process_patrol_state(delta)
+		NPCEnums.State.ATTACK:
+			pass
+			# Implement ATTACK
+	pass
 
 func _update_state():
 	var desired_state = _get_highest_priority_state()
 	if desired_state != current_state:
 		_change_state(desired_state)
 
-func _get_highest_priority_state() -> State:
+func _get_highest_priority_state() -> NPCEnums.State:
 	if target_apple != null and is_instance_valid(target_apple):
-		return State.CHASE_APPLE
+		return NPCEnums.State.CHASE_APPLE
 	if player_in_sight:
-		return State.FACE
-	return State.PATROL
+		return NPCEnums.State.FACE
+	return NPCEnums.State.PATROL
 
-func _change_state(new_state: State):
+func _change_state(new_state: NPCEnums.State):
 	previous_state = current_state
 	current_state = new_state
-	if previous_state == State.FACE and new_state != State.FACE:
+	if previous_state == NPCEnums.State.FACE and new_state != NPCEnums.State.FACE:
 		current_angular_velocity = 0.0
 
 func _process_patrol_state(delta):

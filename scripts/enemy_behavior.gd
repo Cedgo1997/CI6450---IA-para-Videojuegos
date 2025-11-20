@@ -2,29 +2,8 @@ extends Node
 ## Enemy Behavior System
 ## Contiene todos los algoritmos de steering behavior implementados de forma organizada
 ## Incluye: Kinematic Steering, Dynamic Steering, Path Following, y behaviors avanzados
-
-# =============================================================================
-# ENUMS - Definición de tipos de algoritmos disponibles
-# =============================================================================
-
-enum KinematicAlgorithm {
-	SEEK,           ## Buscar objetivo directamente
-	ARRIVE,         ## Llegar al objetivo desacelerando
-	WANDER          ## Vagar sin rumbo fijo
-}
-
-enum DynamicAlgorithm {
-	STEERING_SEEK,              ## Seek con aceleración
-	STEERING_FLEE,              ## Huir del objetivo
-	STEERING_ARRIVE,            ## Arrive con aceleración
-	ALIGN,                      ## Alinear rotación con objetivo
-	VELOCITY_MATCH,             ## Igualar velocidad del objetivo
-	ALIGN_AND_VELOCITY_MATCH,   ## Combinación de align y velocity match
-	PURSUE,                     ## Perseguir prediciendo movimiento
-	EVADE,                      ## Evadir prediciendo movimiento
-	FACE,                       ## Mirar hacia el objetivo
-	WANDER_DYNAMIC              ## Vagar con comportamiento dinámico
-}
+##
+## NOTA: Los enums de algoritmos se encuentran en res://scripts/enums/enemy_enums.gd
 
 # =============================================================================
 # BASE CLASSES - Clases base para steering behaviors

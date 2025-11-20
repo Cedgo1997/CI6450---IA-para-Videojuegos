@@ -1,14 +1,9 @@
 extends CharacterBody2D
 
 const EnemyScript = preload("res://scripts/enemy.gd")
+const EnemyEnums = preload("res://scripts/enums/enemy_enums.gd")
 
-enum SteeringAlgorithm {
-	STEERING_SEEK,
-	STEERING_FLEE,
-	STEERING_ARRIVE
-}
-
-@export var algorithm: SteeringAlgorithm = SteeringAlgorithm.STEERING_SEEK
+@export var algorithm: EnemyEnums.DynamicAlgorithm = EnemyEnums.DynamicAlgorithm.STEERING_SEEK
 @export var max_speed = 200.0
 @export var max_acceleration = 100.0
 @export var rotation_speed = 8.0
@@ -140,11 +135,11 @@ func _initialize_steering_behavior():
 		accel_val = max_acceleration as float
 	
 	match algorithm:
-		SteeringAlgorithm.STEERING_SEEK:
+		EnemyEnums.DynamicAlgorithm.STEERING_SEEK:
 			steering_behavior = SteeringSeek.new(self, target, speed_val, accel_val)
-		SteeringAlgorithm.STEERING_FLEE:
+		EnemyEnums.DynamicAlgorithm.STEERING_FLEE:
 			steering_behavior = SteeringFlee.new(self, target, speed_val, accel_val)
-		SteeringAlgorithm.STEERING_ARRIVE:
+		EnemyEnums.DynamicAlgorithm.STEERING_ARRIVE:
 			var tgt_radius_val: float = 20.0
 			if target_radius != null:
 				tgt_radius_val = target_radius as float

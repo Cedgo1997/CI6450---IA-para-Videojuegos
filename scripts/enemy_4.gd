@@ -1,11 +1,8 @@
 extends RigidBody2D
 
-enum SteeringAlgorithm {
-	WANDER,
-	OBSTACLE_AVOIDANCE
-}
+const EnemyEnums = preload("res://scripts/enums/enemy_enums.gd")
 
-@export var algorithm: SteeringAlgorithm = SteeringAlgorithm.WANDER
+@export var algorithm: EnemyEnums.SimpleSteeringAlgorithm = EnemyEnums.SimpleSteeringAlgorithm.WANDER
 
 @export_group("Wander Settings")
 @export var wander_offset = 300.0
@@ -45,9 +42,9 @@ func _ready():
 
 func _physics_process(delta):
 	match algorithm:
-		SteeringAlgorithm.WANDER:
+		EnemyEnums.SimpleSteeringAlgorithm.WANDER:
 			steering_wander(delta)
-		SteeringAlgorithm.OBSTACLE_AVOIDANCE:
+		EnemyEnums.SimpleSteeringAlgorithm.OBSTACLE_AVOIDANCE:
 			steering_obstacle_avoidance(delta)
 
 func steering_wander(delta: float) -> void:
