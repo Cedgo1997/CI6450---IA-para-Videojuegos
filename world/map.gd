@@ -27,4 +27,5 @@ func _find_navigation_region(node: Node) -> NavigationRegion2D:
 
 func _draw():
 	if pathfinding and pathfinding.polygon_centers.size() > 0:
+		pathfinding.draw_edges(self)
 		pathfinding.draw_polygon_centers(self)
