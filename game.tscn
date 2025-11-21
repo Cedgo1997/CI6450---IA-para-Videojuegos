@@ -1,4 +1,4 @@
-[gd_scene load_steps=8 format=3 uid="uid://2ndqmh48gg6u"]
+[gd_scene load_steps=7 format=3 uid="uid://2ndqmh48gg6u"]
 
 [ext_resource type="PackedScene" uid="uid://c5uyejrtyb4uk" path="res://scenes/player.tscn" id="1_e2o6t"]
 [ext_resource type="PackedScene" uid="uid://bpbip0j5fsspu" path="res://world/world.tscn" id="2_feb5d"]
@@ -12,12 +12,6 @@ _data = {
 }
 point_count = 5
 
-[sub_resource type="Curve2D" id="Curve2D_7jktm"]
-_data = {
-"points": PackedVector2Array(0, 0, 0, 0, 806, 267, 0, 0, 0, 0, 973, 268, 0, 0, 0, 0, 975, 458, 0, 0, 0, 0, 800, 459, 0, 0, 0, 0, 806, 267)
-}
-point_count = 5
-
 [node name="Game" type="Node2D"]
 
 [node name="World" parent="." instance=ExtResource("2_feb5d")]
@@ -28,6 +22,7 @@ position = Vector2(307, 565)
 scale = Vector2(0.5, 0.5)
 collision_layer = 2
 collision_mask = 3
+speed = 150.0
 
 [node name="Watchman" parent="World" node_paths=PackedStringArray("patrol_path") instance=ExtResource("3_fc0e3")]
 position = Vector2(34, -82)
@@ -35,12 +30,17 @@ max_acceleration = 300.0
 path_offset = 20.0
 patrol_path = NodePath("../WatchmanPath")
 
-[node name="Guard" parent="World" node_paths=PackedStringArray("patrol_path") instance=ExtResource("3_fc0e3")]
-position = Vector2(818, 285)
+[node name="Guard" parent="World" instance=ExtResource("3_fc0e3")]
+position = Vector2(885, 468)
+rotation = -1.5707964
 max_acceleration = 300.0
 role = 1
 path_offset = 20.0
-patrol_path = NodePath("../GuardPath")
+
+[node name="Follower" parent="World" instance=ExtResource("3_fc0e3")]
+position = Vector2(62, 375)
+max_speed = 70.0
+role = 2
 
 [node name="WatchmanPath" type="Path2D" parent="World" groups=["npc_path"]]
 visible = false
@@ -48,9 +48,6 @@ curve = SubResource("Curve2D_fc0e3")
 
 [node name="Tree" parent="World" instance=ExtResource("4_7jktm")]
 position = Vector2(70, -19)
-
-[node name="GuardPath" type="Path2D" parent="World"]
-curve = SubResource("Curve2D_7jktm")
 
 [node name="Camera2D" type="Camera2D" parent="."]
 position = Vector2(361, 244)
@@ -70,17 +67,17 @@ position = Vector2(257, 437)
 [node name="Waypoint2" type="Marker2D" parent="Obstacle_1/Waypoints"]
 position = Vector2(260, 542)
 
-[node name="Obstacle2" type="Node2D" parent="."]
+[node name="Obstacle_2" type="Node2D" parent="."]
 
-[node name="Dung" parent="Obstacle2" node_paths=PackedStringArray("waypoints") instance=ExtResource("3_feb5d")]
+[node name="Dung" parent="Obstacle_2" node_paths=PackedStringArray("waypoints") instance=ExtResource("3_feb5d")]
 position = Vector2(396, 541)
 rotation = 1.5529411
 waypoints = [NodePath("../Waypoints/Waypoint"), NodePath("../Waypoints/Waypoint2")]
 
-[node name="Waypoints" type="Node2D" parent="Obstacle2"]
+[node name="Waypoints" type="Node2D" parent="Obstacle_2"]
 
-[node name="Waypoint" type="Marker2D" parent="Obstacle2/Waypoints"]
+[node name="Waypoint" type="Marker2D" parent="Obstacle_2/Waypoints"]
 position = Vector2(395, 437)
 
-[node name="Waypoint2" type="Marker2D" parent="Obstacle2/Waypoints"]
+[node name="Waypoint2" type="Marker2D" parent="Obstacle_2/Waypoints"]
 position = Vector2(395, 542)

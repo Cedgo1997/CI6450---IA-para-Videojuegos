@@ -5,7 +5,7 @@
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_y4f30"]
 size = Vector2(720, 47)
 
-[node name="Wall" type="Node2D" groups=["obstacle"]]
+[node name="Wall" type="StaticBody2D" groups=["obstacle"]]
 metadata/_edit_group_ = true
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]

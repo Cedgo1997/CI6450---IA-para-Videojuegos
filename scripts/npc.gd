@@ -2,6 +2,7 @@ extends CharacterBody2D
 
 const EnemyBehavior = preload("res://scripts/enemy_behavior.gd")
 const NPCEnums = preload("res://scripts/enums/npc_enums.gd")
+const BulletScene = preload("res://scenes/bullet.tscn")
 
 @onready var item_detector = $SightArea
 
@@ -11,6 +12,13 @@ const NPCEnums = preload("res://scripts/enums/npc_enums.gd")
 
 @export_group('Role Settings')
 @export var role: NPCEnums.Role = NPCEnums.Role.PATROLMAN
+
+@export_group('Shooting Settings')
+@export var shoot_interval: float = 0.5
+@export var can_shoot: bool = true
+
+@export_group('Follower Settings')
+@export var following_duration: float = 5.0
 
 @export_group('Path Following Settings')
 @export var path_offset: float = 5.0
@@ -32,6 +40,8 @@ var current_angular_velocity: float = 0.0
 var player_in_sight: bool = false
 var apple_seek_behavior: SteeringSeek = null
 var apple_virtual_target: Node2D = null
+var shoot_timer: float = 0.0
+var following_timer: float = 0.0
 
 class Path:
 	var path_node: Path2D
@@ -200,6 +210,8 @@ func _physics_process(delta):
 			_process_patrolman_behavior(delta)
 		NPCEnums.Role.GUARD:
 			_process_guard_behavior(delta)
+		NPCEnums.Role.FOLLOWER:
+			_process_follower_behavior(delta)
 
 func _process_patrolman_behavior(delta):
 	_update_state()
@@ -216,12 +228,19 @@ func _process_guard_behavior(delta):
 	_update_state()
 	
 	match current_state:
-		NPCEnums.State.PATROL:
-			_process_patrol_state(delta)
-		NPCEnums.State.ATTACK:
-			pass
-			# Implement ATTACK
-	pass
+		NPCEnums.State.FACE:
+			_process_face_state(delta)
+		NPCEnums.State.CHASE_APPLE:
+			_process_chasing_apple_state(delta)
+
+func _process_follower_behavior(delta):
+	_update_state()
+	
+	match current_state:
+		NPCEnums.State.FOLLOW_PLAYER:
+			_process_follow_player_state(delta)
+		NPCEnums.State.CHASE_APPLE:
+			_process_chasing_apple_state(delta)
 
 func _update_state():
 	var desired_state = _get_highest_priority_state()
@@ -231,9 +250,19 @@ func _update_state():
 func _get_highest_priority_state() -> NPCEnums.State:
 	if target_apple != null and is_instance_valid(target_apple):
 		return NPCEnums.State.CHASE_APPLE
-	if player_in_sight:
-		return NPCEnums.State.FACE
+	
+	# Different behavior based on role
+	if role == NPCEnums.Role.FOLLOWER:
+		# FOLLOWER: Sigue mientras el timer esté activo
+		if following_timer > 0.0:
+			return NPCEnums.State.FOLLOW_PLAYER
+	else:
+		# Otros roles: comportamiento normal (FACE cuando ve al jugador)
+		if player_in_sight:
+			return NPCEnums.State.FACE
+	
 	return NPCEnums.State.PATROL
+
 
 func _change_state(new_state: NPCEnums.State):
 	previous_state = current_state
@@ -272,10 +301,40 @@ func _process_face_state(delta):
 	var angular_acceleration = face_behavior.align_to_orientation(target_orientation, current_angular_velocity, delta)
 	current_angular_velocity += angular_acceleration * delta
 	rotation += current_angular_velocity * delta
+	
+	# Shoot while facing the player (only for GUARD role)
+	if can_shoot and role == NPCEnums.Role.GUARD:
+		shoot_timer -= delta
+		if shoot_timer <= 0.0:
+			_shoot_bullet()
+			shoot_timer = shoot_interval
+
+func _process_follow_player_state(delta):
+	if not player:
+		return
+	
+	# Si el jugador está en el área de visión, resetear el timer
+	if player_in_sight:
+		following_timer = following_duration
+	else:
+		# Si no está visible, disminuir el timer
+		following_timer -= delta
+	
+	var direction = (player.global_position - global_position).normalized()
+	velocity = direction * max_speed
+	move_and_slide()
+	
+	# Rotate towards movement direction
+	if velocity.length() > 10.0:
+		var target_rotation = velocity.angle()
+		rotation = lerp_angle(rotation, target_rotation, rotation_speed * delta)
 
 func _on_sight_body_entered(body: Node2D):
 	if body.is_in_group("player"):
 		player_in_sight = true
+		# Si es FOLLOWER, iniciar/resetear el timer de seguimiento
+		if role == NPCEnums.Role.FOLLOWER:
+			following_timer = following_duration
 
 func _on_sight_body_exited(body: Node2D):
 	if body.is_in_group("player"):
@@ -337,5 +396,20 @@ func update_target_apple():
 	if closest_apple != null:
 		target_apple = closest_apple
 
+func _shoot_bullet():
+	var bullet = BulletScene.instantiate()
+	
+	# Set bullet parameters based on current NPC state
+	bullet.pos = global_position
+	bullet.rota = rotation
+	bullet.dir = rotation
+	
+	# Add bullet to the scene tree (parent scene)
+	get_parent().add_child(bullet)
+
 func _on_timer_timeout():
 	pass
+
+
+func _on_following_timer_timeout() -> void:
+	pass # Replace with function body.
