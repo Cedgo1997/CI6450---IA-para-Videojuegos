@@ -5,15 +5,12 @@ const PathfindingAStar = preload("res://scripts/pathfinding_astar.gd")
 var pathfinding: PathfindingAStar = null
 
 func _ready():
-	# Inicializar el sistema de pathfinding
 	pathfinding = PathfindingAStar.new()
-	
-	# Buscar el NavigationRegion2D en la escena
 	var nav_region = _find_navigation_region(self)
 	
 	if nav_region:
 		pathfinding.initialize(nav_region)
-		queue_redraw() # Solicitar redibujo para mostrar los puntos
+		queue_redraw()
 	else:
 		push_error("No se encontró NavigationRegion2D en la escena")
 
