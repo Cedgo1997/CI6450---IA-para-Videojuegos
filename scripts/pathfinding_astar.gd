@@ -121,18 +121,97 @@ func draw_polygon_centers(canvas: CanvasItem):
 func get_polygon_centers() -> Array[Vector2]:
 	return polygon_centers
 
-func get_nearest_center(position: Vector2) -> Vector2:
+func get_nearest_center_index(position: Vector2) -> int:
 	if polygon_centers.is_empty():
-		return position
+		return -1
 	
-	var nearest_center = polygon_centers[0]
-	var min_distance = position.distance_to(nearest_center)
+	var nearest_index = 0
+	var min_distance = position.distance_to(polygon_centers[0])
 	
-	for center in polygon_centers:
-		var distance = position.distance_to(center)
+	for i in range(polygon_centers.size()):
+		var distance = position.distance_to(polygon_centers[i])
 		if distance < min_distance:
 			min_distance = distance
-			nearest_center = center
+			nearest_index = i
 	
-	return nearest_center
+	return nearest_index
+
+func get_neighbors(node_index: int) -> Array[int]:
+	var neighbors: Array[int] = []
+	
+	for edge in edges:
+		if edge[0] == node_index:
+			neighbors.append(edge[1])
+		elif edge[1] == node_index:
+			neighbors.append(edge[0])
+	
+	return neighbors
+
+func find_path(start_pos: Vector2, end_pos: Vector2) -> Array[Vector2]:
+	var start_index = get_nearest_center_index(start_pos)
+	var end_index = get_nearest_center_index(end_pos)
+	
+	if start_index == -1 or end_index == -1:
+		return []
+	
+	if start_index == end_index:
+		return [end_pos]
+	
+	var open_set: Array[int] = [start_index]
+	var came_from: Dictionary = {}
+	var g_score: Dictionary = {}
+	var f_score: Dictionary = {}
+	
+	for i in range(polygon_centers.size()):
+		g_score[i] = INF
+		f_score[i] = INF
+	
+	g_score[start_index] = 0
+	f_score[start_index] = _heuristic(start_index, end_index)
+	
+	while not open_set.is_empty():
+		var current = _get_lowest_f_score(open_set, f_score)
+		
+		if current == end_index:
+			var path = _reconstruct_path(came_from, current)
+			path.append(end_pos)
+			return path
+		
+		open_set.erase(current)
+		
+		for neighbor in get_neighbors(current):
+			var tentative_g_score = g_score[current] + polygon_centers[current].distance_to(polygon_centers[neighbor])
+			
+			if tentative_g_score < g_score[neighbor]:
+				came_from[neighbor] = current
+				g_score[neighbor] = tentative_g_score
+				f_score[neighbor] = g_score[neighbor] + _heuristic(neighbor, end_index)
+				
+				if not open_set.has(neighbor):
+					open_set.append(neighbor)
+	
+	return []
+
+func _heuristic(from_index: int, to_index: int) -> float:
+	return polygon_centers[from_index].distance_to(polygon_centers[to_index])
+
+func _get_lowest_f_score(open_set: Array[int], f_score: Dictionary) -> int:
+	var lowest = open_set[0]
+	var lowest_score = f_score[lowest]
+	
+	for node in open_set:
+		if f_score[node] < lowest_score:
+			lowest = node
+			lowest_score = f_score[node]
+	
+	return lowest
+
+func _reconstruct_path(came_from: Dictionary, current: int) -> Array[Vector2]:
+	var path: Array[Vector2] = [polygon_centers[current]]
+	
+	while came_from.has(current):
+		current = came_from[current]
+		path.push_front(polygon_centers[current])
+	
+	return path
 

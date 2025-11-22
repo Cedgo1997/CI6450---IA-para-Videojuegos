@@ -5,6 +5,7 @@ const PathfindingAStar = preload("res://scripts/pathfinding_astar.gd")
 var pathfinding: PathfindingAStar = null
 
 func _ready():
+	add_to_group("map")
 	pathfinding = PathfindingAStar.new()
 	var nav_region = _find_navigation_region(self)
 	

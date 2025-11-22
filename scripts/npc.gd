@@ -19,6 +19,7 @@ const BulletScene = preload("res://scenes/bullet.tscn")
 
 @export_group('Follower Settings')
 @export var following_duration: float = 5.0
+@export var path_recalculation_interval: float = 0.5
 
 @export_group('Path Following Settings')
 @export var path_offset: float = 5.0
@@ -42,6 +43,10 @@ var apple_seek_behavior: SteeringSeek = null
 var apple_virtual_target: Node2D = null
 var shoot_timer: float = 0.0
 var following_timer: float = 0.0
+var pathfinding_system: PathfindingAStar = null
+var astar_path: Array[Vector2] = []
+var current_path_index: int = 0
+var path_recalculation_timer: float = 0.0
 
 class Path:
 	var path_node: Path2D
@@ -193,6 +198,8 @@ func _ready():
 	if sight_area:
 		sight_area.body_entered.connect(_on_sight_body_entered)
 		sight_area.body_exited.connect(_on_sight_body_exited)
+	
+	_initialize_pathfinding()
 
 func _initialize_path_following():
 	if not patrol_path:
@@ -203,6 +210,13 @@ func _initialize_path_following():
 	
 	var closest_param = path_wrapper.getParam(global_position, 0.0)
 	follow_path_behavior.current_param = closest_param + 0.5
+
+func _initialize_pathfinding():
+	var map_node = get_tree().get_first_node_in_group("map")
+	if map_node and map_node.has_method("get") and map_node.get("pathfinding"):
+		pathfinding_system = map_node.pathfinding
+	else:
+		push_warning("No se pudo encontrar el sistema de pathfinding en el mapa")
 
 func _physics_process(delta):
 	match role:
@@ -310,21 +324,39 @@ func _process_face_state(delta):
 			shoot_timer = shoot_interval
 
 func _process_follow_player_state(delta):
-	if not player:
+	if not player or not pathfinding_system:
 		return
 	
-	# Si el jugador está en el área de visión, resetear el timer
 	if player_in_sight:
 		following_timer = following_duration
 	else:
-		# Si no está visible, disminuir el timer
 		following_timer -= delta
 	
-	var direction = (player.global_position - global_position).normalized()
+	path_recalculation_timer -= delta
+	if path_recalculation_timer <= 0.0:
+		astar_path = pathfinding_system.find_path(global_position, player.global_position)
+		current_path_index = 0
+		path_recalculation_timer = path_recalculation_interval
+	
+	if astar_path.is_empty():
+		return
+	
+	if current_path_index >= astar_path.size():
+		current_path_index = astar_path.size() - 1
+	
+	var target_position = astar_path[current_path_index]
+	var distance_to_target = global_position.distance_to(target_position)
+	
+	if distance_to_target < 20.0:
+		current_path_index += 1
+		if current_path_index >= astar_path.size():
+			current_path_index = astar_path.size() - 1
+			target_position = astar_path[current_path_index]
+	
+	var direction = (target_position - global_position).normalized()
 	velocity = direction * max_speed
 	move_and_slide()
 	
-	# Rotate towards movement direction
 	if velocity.length() > 10.0:
 		var target_rotation = velocity.angle()
 		rotation = lerp_angle(rotation, target_rotation, rotation_speed * delta)
