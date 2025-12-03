@@ -1,10 +1,12 @@
-[gd_scene load_steps=7 format=3 uid="uid://2ndqmh48gg6u"]
+[gd_scene load_steps=10 format=3 uid="uid://2ndqmh48gg6u"]
 
 [ext_resource type="PackedScene" uid="uid://c5uyejrtyb4uk" path="res://scenes/player.tscn" id="1_e2o6t"]
 [ext_resource type="PackedScene" uid="uid://bpbip0j5fsspu" path="res://world/world.tscn" id="2_feb5d"]
 [ext_resource type="PackedScene" uid="uid://cfshl43alfx02" path="res://scenes/npc_2.tscn" id="3_fc0e3"]
 [ext_resource type="PackedScene" uid="uid://cpd7qmb540grs" path="res://scenes/dung.tscn" id="3_feb5d"]
 [ext_resource type="PackedScene" uid="uid://bmihvde6c5d4e" path="res://scenes/tree.tscn" id="4_7jktm"]
+[ext_resource type="Script" uid="uid://b7t0lpg8h24gx" path="res://unit.gd" id="5_eow3j"]
+[ext_resource type="Texture2D" uid="uid://dpago4r6yyjfl" path="res://icon.svg" id="5_ryrav"]
 
 [sub_resource type="Curve2D" id="Curve2D_fc0e3"]
 _data = {
@@ -12,72 +14,102 @@ _data = {
 }
 point_count = 5
 
+[sub_resource type="CircleShape2D" id="CircleShape2D_ryrav"]
+radius = 8.0
+
 [node name="Game" type="Node2D"]
 
 [node name="World" parent="." instance=ExtResource("2_feb5d")]
-position = Vector2(-96, 82)
+position = Vector2(0, -70)
 
 [node name="Player" parent="World" instance=ExtResource("1_e2o6t")]
-position = Vector2(307, 565)
+position = Vector2(52, 692)
 scale = Vector2(0.5, 0.5)
 collision_layer = 2
 collision_mask = 3
 speed = 150.0
 
 [node name="Watchman" parent="World" node_paths=PackedStringArray("patrol_path") instance=ExtResource("3_fc0e3")]
-position = Vector2(34, -82)
+position = Vector2(116, 75)
 max_acceleration = 300.0
 path_offset = 20.0
 patrol_path = NodePath("../WatchmanPath")
 
 [node name="Guard" parent="World" instance=ExtResource("3_fc0e3")]
-position = Vector2(885, 468)
+position = Vector2(657, 448)
 rotation = -1.5707964
 max_acceleration = 300.0
 role = 1
 path_offset = 20.0
 
 [node name="Follower" parent="World" instance=ExtResource("3_fc0e3")]
-position = Vector2(62, 375)
+position = Vector2(-94, 397)
 max_speed = 70.0
 role = 2
 
 [node name="WatchmanPath" type="Path2D" parent="World" groups=["npc_path"]]
-visible = false
+position = Vector2(104.796555, 113.83799)
+scale = Vector2(0.5934337, 0.5934337)
 curve = SubResource("Curve2D_fc0e3")
 
 [node name="Tree" parent="World" instance=ExtResource("4_7jktm")]
-position = Vector2(70, -19)
+position = Vector2(141, 99)
+
+[node name="Unit" type="CharacterBody2D" parent="World"]
+position = Vector2(699, 299)
+safe_margin = 15.0
+script = ExtResource("5_eow3j")
+movement_speed = 150.0
+metadata/_edit_group_ = true
+
+[node name="Sprite2D" type="Sprite2D" parent="World/Unit"]
+scale = Vector2(0.12500012, 0.12500012)
+texture = ExtResource("5_ryrav")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="World/Unit"]
+shape = SubResource("CircleShape2D_ryrav")
+
+[node name="NavigationAgent2D" type="NavigationAgent2D" parent="World/Unit"]
+path_desired_distance = 10.0
+path_postprocessing = 1
+avoidance_enabled = true
+radius = 100.0
+avoidance_mask = 2
+debug_enabled = true
+debug_use_custom = true
+debug_path_custom_color = Color(1, 0, 0, 1)
 
 [node name="Camera2D" type="Camera2D" parent="."]
 position = Vector2(361, 244)
 
-[node name="Obstacle_1" type="Node2D" parent="."]
+[node name="Obstacle_1" type="Node2D" parent="." groups=["obstacle"]]
 
 [node name="Dung" parent="Obstacle_1" node_paths=PackedStringArray("waypoints") instance=ExtResource("3_feb5d")]
-position = Vector2(256.99997, 436.99997)
+position = Vector2(290.00003, 305)
 rotation = 1.5529411
 waypoints = [NodePath("../Waypoints/Waypoint"), NodePath("../Waypoints/Waypoint2")]
 
 [node name="Waypoints" type="Node2D" parent="Obstacle_1"]
 
 [node name="Waypoint" type="Marker2D" parent="Obstacle_1/Waypoints"]
-position = Vector2(257, 437)
+position = Vector2(290, 305)
 
 [node name="Waypoint2" type="Marker2D" parent="Obstacle_1/Waypoints"]
-position = Vector2(260, 542)
+position = Vector2(290, 380)
 
-[node name="Obstacle_2" type="Node2D" parent="."]
+[node name="Obstacle_2" type="Node2D" parent="." groups=["obstacle"]]
 
 [node name="Dung" parent="Obstacle_2" node_paths=PackedStringArray("waypoints") instance=ExtResource("3_feb5d")]
-position = Vector2(396, 541)
+position = Vector2(385, 380)
 rotation = 1.5529411
 waypoints = [NodePath("../Waypoints/Waypoint"), NodePath("../Waypoints/Waypoint2")]
 
 [node name="Waypoints" type="Node2D" parent="Obstacle_2"]
 
 [node name="Waypoint" type="Marker2D" parent="Obstacle_2/Waypoints"]
-position = Vector2(395, 437)
+position = Vector2(385, 305)
 
 [node name="Waypoint2" type="Marker2D" parent="Obstacle_2/Waypoints"]
-position = Vector2(395, 542)
+position = Vector2(385, 380)
+
+[connection signal="velocity_computed" from="World/Unit/NavigationAgent2D" to="World/Unit" method="_on_navigation_agent_2d_velocity_computed"]
