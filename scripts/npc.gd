@@ -225,6 +225,13 @@ func _ready():
 			var graphs = get_tree().get_nodes_in_group("tactical_graph")
 			if graphs.size() > 0:
 				tactical_graph = graphs[0]
+	
+	# Debug: verificar inicialización del grafo táctico
+	if role == NPCEnums.Role.FOLLOWER:
+		if tactical_graph:
+			print("NPC Follower: Grafo táctico inicializado correctamente")
+		else:
+			push_warning("NPC Follower: No se encontró el grafo táctico. El pathfinding táctico no funcionará.")
 
 func _initialize_path_following():
 	if not patrol_path:
@@ -348,7 +355,25 @@ func _process_face_state(delta):
 			shoot_timer = shoot_interval
 
 func _process_follow_player_state(delta):
-	if not player or not navigation_agent_2d:
+	if not player:
+		return
+	
+	# Verificar que el grafo táctico esté disponible
+	if not tactical_graph:
+		# Fallback: usar navegación normal si no hay grafo táctico
+		if not navigation_agent_2d:
+			return
+		navigation_agent_2d.target_position = player.global_position
+		var next_path_position = navigation_agent_2d.get_next_path_position()
+		var new_velocity = global_position.direction_to(next_path_position) * max_speed
+		if navigation_agent_2d.avoidance_enabled:
+			navigation_agent_2d.set_velocity(new_velocity)
+		else:
+			_on_navigation_agent_2d_velocity_computed(new_velocity)
+		move_and_slide()
+		if velocity.length() > 10.0:
+			var target_rotation = velocity.angle()
+			rotation = lerp_angle(rotation, target_rotation, rotation_speed * delta)
 		return
 	
 	if player_in_sight:
@@ -358,6 +383,7 @@ func _process_follow_player_state(delta):
 	
 	var player_position = player.global_position
 	
+	# Recalcular el path táctico periódicamente o si el jugador se movió significativamente
 	path_recalculate_timer -= delta
 	if path_recalculate_timer <= 0.0 or player_position.distance_to(last_target_position) > 50.0:
 		var best_location = get_best_tactical_location_near(player_position, 150.0)
@@ -373,33 +399,58 @@ func _process_follow_player_state(delta):
 		
 		path_recalculate_timer = path_recalculate_interval
 	
+	# Usar directamente el tactical_path para el movimiento
 	var target_position: Vector2
 	if tactical_path.size() > 0 and current_path_index < tactical_path.size():
 		target_position = tactical_path[current_path_index]
 		
-		if global_position.distance_to(target_position) < 20.0:
+		# Avanzar al siguiente waypoint si estamos cerca del actual
+		var distance_to_waypoint = global_position.distance_to(target_position)
+		if distance_to_waypoint < 20.0:
 			current_path_index += 1
 			if current_path_index >= tactical_path.size():
-				tactical_path.clear()
-				current_path_index = 0
-				target_position = player_position
+				# Hemos llegado al final del path táctico
+				# Si el último waypoint es cerca del jugador, ir directamente al jugador
+				# Si no, recalcular el path
+				if target_position.distance_to(player_position) < 30.0:
+					tactical_path.clear()
+					current_path_index = 0
+					target_position = player_position
+				else:
+					# Recalcular path hacia el jugador
+					tactical_path = find_tactical_path(global_position, player_position)
+					current_path_index = 0
+					if tactical_path.size() > 0:
+						target_position = tactical_path[0]
+					else:
+						target_position = player_position
+			else:
+				target_position = tactical_path[current_path_index]
 	else:
+		# No hay path táctico válido, ir directamente al jugador
 		target_position = player_position
 	
-	navigation_agent_2d.target_position = target_position
+	# Calcular velocidad usando steering seek hacia el waypoint táctico actual
+	var direction = target_position - global_position
+	var distance = direction.length()
 	
-	var current_agent_position = global_position
-	var next_path_position = navigation_agent_2d.get_next_path_position()
-	var new_velocity = current_agent_position.direction_to(next_path_position) * max_speed
-	
-	if navigation_agent_2d.is_navigation_finished():
-		return
-	
-	if navigation_agent_2d.avoidance_enabled:
-		navigation_agent_2d.set_velocity(new_velocity)
+	if distance < 5.0:
+		# Ya llegamos al waypoint, detener
+		current_velocity = current_velocity.lerp(Vector2.ZERO, 5.0 * delta)
 	else:
-		_on_navigation_agent_2d_velocity_computed(new_velocity)
+		# Usar steering seek hacia el waypoint
+		var desired_velocity = direction.normalized() * max_speed
+		var steering = (desired_velocity - current_velocity) / 0.1  # time_to_target aproximado
+		
+		if steering.length() > max_acceleration:
+			steering = steering.normalized() * max_acceleration
+		
+		current_velocity += steering * delta
+		
+		if current_velocity.length() > max_speed:
+			current_velocity = current_velocity.normalized() * max_speed
 	
+	velocity = current_velocity
 	move_and_slide()
 	
 	if velocity.length() > 10.0:
@@ -504,12 +555,16 @@ func _draw():
 
 func find_tactical_path(from: Vector2, to: Vector2) -> Array[Vector2]:
 	if not tactical_graph or not tactical_graph.has_method("find_nearest_location"):
+		if role == NPCEnums.Role.FOLLOWER:
+			push_warning("find_tactical_path: No hay grafo táctico disponible")
 		return [to]
 	
 	var start_location = tactical_graph.find_nearest_location(from)
 	var end_location = tactical_graph.find_nearest_location(to)
 	
 	if not start_location or not end_location:
+		if role == NPCEnums.Role.FOLLOWER:
+			push_warning("find_tactical_path: No se encontraron ubicaciones tácticas cercanas")
 		return [to]
 	
 	if start_location == end_location:
@@ -518,6 +573,8 @@ func find_tactical_path(from: Vector2, to: Vector2) -> Array[Vector2]:
 	var path = _a_star_tactical(start_location, end_location)
 	
 	if path.is_empty():
+		if role == NPCEnums.Role.FOLLOWER:
+			push_warning("find_tactical_path: A* no encontró un camino. Usando destino directo.")
 		return [to]
 	
 	var positions: Array[Vector2] = []
@@ -526,7 +583,12 @@ func find_tactical_path(from: Vector2, to: Vector2) -> Array[Vector2]:
 			positions.append(location.global_position)
 	
 	if positions.is_empty():
+		if role == NPCEnums.Role.FOLLOWER:
+			push_warning("find_tactical_path: El path no tiene posiciones válidas")
 		return [to]
+	
+	if role == NPCEnums.Role.FOLLOWER:
+		print("find_tactical_path: Path táctico encontrado con %d waypoints" % positions.size())
 	
 	return positions
 
