@@ -1,0 +1,31 @@
+[gd_scene load_steps=3 format=3 uid="uid://bfeh6fiq8n37m"]
+
+[ext_resource type="Script" path="res://Tactics/tactical_graph.gd" id="1_tactical_graph"]
+[ext_resource type="PackedScene" uid="uid://dd43i2xyxbp7m" path="res://Tactics/tactical_location.tscn" id="2_cb5ms"]
+
+[node name="TacticalGraph" type="Node2D"]
+script = ExtResource("1_tactical_graph")
+
+[node name="TacticalLocations" type="Node2D" parent="."]
+
+[node name="TacticalLocation" parent="TacticalLocations" instance=ExtResource("2_cb5ms")]
+
+[node name="TacticalLocation2" parent="TacticalLocations" instance=ExtResource("2_cb5ms")]
+
+[node name="TacticalLocation3" parent="TacticalLocations" instance=ExtResource("2_cb5ms")]
+
+[node name="TacticalLocation4" parent="TacticalLocations" instance=ExtResource("2_cb5ms")]
+
+[node name="TacticalLocation5" parent="TacticalLocations" instance=ExtResource("2_cb5ms")]
+
+[node name="TacticalLocation6" parent="TacticalLocations" instance=ExtResource("2_cb5ms")]
+
+[node name="TacticalLocation7" parent="TacticalLocations" instance=ExtResource("2_cb5ms")]
+
+[node name="TacticalLocation8" parent="TacticalLocations" instance=ExtResource("2_cb5ms")]
+
+[node name="TacticalLocation9" parent="TacticalLocations" instance=ExtResource("2_cb5ms")]
+
+[node name="TacticalLocation10" parent="TacticalLocations" instance=ExtResource("2_cb5ms")]
+
+[node name="ConnectionsVisualizer" type="Node2D" parent="."]

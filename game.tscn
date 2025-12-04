@@ -1,21 +1,18 @@
-[gd_scene load_steps=10 format=3 uid="uid://2ndqmh48gg6u"]
+[gd_scene load_steps=9 format=3 uid="uid://2ndqmh48gg6u"]
 
 [ext_resource type="PackedScene" uid="uid://c5uyejrtyb4uk" path="res://scenes/player.tscn" id="1_e2o6t"]
 [ext_resource type="PackedScene" uid="uid://bpbip0j5fsspu" path="res://world/world.tscn" id="2_feb5d"]
 [ext_resource type="PackedScene" uid="uid://cfshl43alfx02" path="res://scenes/npc_2.tscn" id="3_fc0e3"]
 [ext_resource type="PackedScene" uid="uid://cpd7qmb540grs" path="res://scenes/dung.tscn" id="3_feb5d"]
 [ext_resource type="PackedScene" uid="uid://bmihvde6c5d4e" path="res://scenes/tree.tscn" id="4_7jktm"]
-[ext_resource type="Script" uid="uid://b7t0lpg8h24gx" path="res://unit.gd" id="5_eow3j"]
-[ext_resource type="Texture2D" uid="uid://dpago4r6yyjfl" path="res://icon.svg" id="5_ryrav"]
+[ext_resource type="Script" uid="uid://irokgaypv1fg" path="res://Tactics/tactical_graph.gd" id="7_vef74"]
+[ext_resource type="PackedScene" uid="uid://dd43i2xyxbp7m" path="res://Tactics/tactical_location.tscn" id="8_hve3p"]
 
 [sub_resource type="Curve2D" id="Curve2D_fc0e3"]
 _data = {
 "points": PackedVector2Array(-9.63858, 8.096407, 9.63858, -8.096407, 16, -72, -11.566296, -10.024123, 11.566296, 10.024123, 159, -70, 14.650641, -12.722925, -14.650641, 12.722925, 162, 80, 14.265099, 11.951839, -14.265099, -11.951839, 13, 82, -10.79521, 13.494012, 10.79521, -13.494012, 16, -72)
 }
 point_count = 5
-
-[sub_resource type="CircleShape2D" id="CircleShape2D_ryrav"]
-radius = 8.0
 
 [node name="Game" type="Node2D"]
 
@@ -34,6 +31,7 @@ position = Vector2(116, 75)
 max_acceleration = 300.0
 path_offset = 20.0
 patrol_path = NodePath("../WatchmanPath")
+tactical_graph_path = NodePath("../TacticalGraph")
 
 [node name="Guard" parent="World" instance=ExtResource("3_fc0e3")]
 position = Vector2(657, 448)
@@ -41,11 +39,19 @@ rotation = -1.5707964
 max_acceleration = 300.0
 role = 1
 path_offset = 20.0
+tactical_graph_path = NodePath("../TacticalGraph")
 
 [node name="Follower" parent="World" instance=ExtResource("3_fc0e3")]
 position = Vector2(-94, 397)
 max_speed = 70.0
 role = 2
+tactical_weights = {
+"altura": 0.2,
+"cobertura": 0.5,
+"peligro": -0.7,
+"visibilidad": 0.3
+}
+tactical_graph_path = NodePath("../TacticalGraph")
 
 [node name="WatchmanPath" type="Path2D" parent="World" groups=["npc_path"]]
 position = Vector2(104.796555, 113.83799)
@@ -55,29 +61,113 @@ curve = SubResource("Curve2D_fc0e3")
 [node name="Tree" parent="World" instance=ExtResource("4_7jktm")]
 position = Vector2(141, 99)
 
-[node name="Unit" type="CharacterBody2D" parent="World"]
-position = Vector2(699, 299)
-safe_margin = 15.0
-script = ExtResource("5_eow3j")
-movement_speed = 150.0
-metadata/_edit_group_ = true
+[node name="TacticalGraph" type="Node2D" parent="World"]
+script = ExtResource("7_vef74")
 
-[node name="Sprite2D" type="Sprite2D" parent="World/Unit"]
-scale = Vector2(0.12500012, 0.12500012)
-texture = ExtResource("5_ryrav")
+[node name="TacticalLocations" type="Node2D" parent="World/TacticalGraph"]
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="World/Unit"]
-shape = SubResource("CircleShape2D_ryrav")
+[node name="TacticalLocation" parent="World/TacticalGraph/TacticalLocations" node_paths=PackedStringArray("connected_locations") instance=ExtResource("8_hve3p")]
+position = Vector2(99, -113)
+static_qualities = {
+"altura": 0.3,
+"cobertura": 0.9,
+"visibilidad": 0.2
+}
+connected_locations = [NodePath("../TacticalLocation3")]
+node_id = 1
+connection_color = Color(1, 1, 0, 0.5019608)
 
-[node name="NavigationAgent2D" type="NavigationAgent2D" parent="World/Unit"]
-path_desired_distance = 10.0
-path_postprocessing = 1
-avoidance_enabled = true
-radius = 100.0
-avoidance_mask = 2
-debug_enabled = true
-debug_use_custom = true
-debug_path_custom_color = Color(1, 0, 0, 1)
+[node name="TacticalLocation2" parent="World/TacticalGraph/TacticalLocations" node_paths=PackedStringArray("connected_locations") instance=ExtResource("8_hve3p")]
+position = Vector2(643, 336)
+static_qualities = {
+"altura": 0.3,
+"cobertura": 0.9,
+"visibilidad": 0.2
+}
+connected_locations = [NodePath("../TacticalLocation4"), NodePath("../TacticalLocation7")]
+node_id = 2
+
+[node name="TacticalLocation3" parent="World/TacticalGraph/TacticalLocations" node_paths=PackedStringArray("connected_locations") instance=ExtResource("8_hve3p")]
+position = Vector2(251, 106)
+static_qualities = {
+"altura": 0.4,
+"cobertura": 0.5,
+"visibilidad": 0.7
+}
+connected_locations = [NodePath("../TacticalLocation"), NodePath("../TacticalLocation4")]
+node_id = 3
+
+[node name="TacticalLocation4" parent="World/TacticalGraph/TacticalLocations" node_paths=PackedStringArray("connected_locations") instance=ExtResource("8_hve3p")]
+position = Vector2(398, 60)
+static_qualities = {
+"altura": 0.4,
+"cobertura": 0.4,
+"visibilidad": 0.8
+}
+connected_locations = [NodePath("../TacticalLocation2"), NodePath("../TacticalLocation3"), NodePath("../TacticalLocation6")]
+node_id = 4
+
+[node name="TacticalLocation5" parent="World/TacticalGraph/TacticalLocations" node_paths=PackedStringArray("connected_locations") instance=ExtResource("8_hve3p")]
+position = Vector2(-60, 420)
+static_qualities = {
+"altura": 0.5,
+"cobertura": 0.9,
+"visibilidad": 0.5
+}
+connected_locations = [NodePath("../TacticalLocation6"), NodePath("../TacticalLocation8")]
+node_id = 5
+
+[node name="TacticalLocation6" parent="World/TacticalGraph/TacticalLocations" node_paths=PackedStringArray("connected_locations") instance=ExtResource("8_hve3p")]
+position = Vector2(323, 403)
+static_qualities = {
+"altura": 0.5,
+"cobertura": 0.1,
+"visibilidad": 0.9
+}
+connected_locations = [NodePath("../TacticalLocation4"), NodePath("../TacticalLocation5"), NodePath("../TacticalLocation8"), NodePath("../TacticalLocation9"), NodePath("../TacticalLocation10")]
+node_id = 6
+
+[node name="TacticalLocation7" parent="World/TacticalGraph/TacticalLocations" node_paths=PackedStringArray("connected_locations") instance=ExtResource("8_hve3p")]
+position = Vector2(646, 501)
+static_qualities = {
+"altura": 0.5,
+"cobertura": 0.9,
+"visibilidad": 0.5
+}
+connected_locations = [NodePath("../TacticalLocation2")]
+node_id = 7
+
+[node name="TacticalLocation8" parent="World/TacticalGraph/TacticalLocations" node_paths=PackedStringArray("connected_locations") instance=ExtResource("8_hve3p")]
+position = Vector2(41, 385)
+static_qualities = {
+"altura": 0.6,
+"cobertura": 0.7,
+"visibilidad": 0.5
+}
+connected_locations = [NodePath("../TacticalLocation5"), NodePath("../TacticalLocation6"), NodePath("../TacticalLocation9")]
+node_id = 8
+
+[node name="TacticalLocation9" parent="World/TacticalGraph/TacticalLocations" node_paths=PackedStringArray("connected_locations") instance=ExtResource("8_hve3p")]
+position = Vector2(79, 683)
+static_qualities = {
+"altura": 0.5,
+"cobertura": 0.5,
+"visibilidad": 0.7
+}
+connected_locations = [NodePath("../TacticalLocation6"), NodePath("../TacticalLocation8"), NodePath("../TacticalLocation10")]
+node_id = 9
+
+[node name="TacticalLocation10" parent="World/TacticalGraph/TacticalLocations" node_paths=PackedStringArray("connected_locations") instance=ExtResource("8_hve3p")]
+position = Vector2(330, 686)
+static_qualities = {
+"altura": 0.4,
+"cobertura": 0.3,
+"visibilidad": 0.8
+}
+connected_locations = [NodePath("../TacticalLocation6"), NodePath("../TacticalLocation9")]
+node_id = 10
+
+[node name="ConnectionsVisualizer" type="Node2D" parent="World/TacticalGraph"]
 
 [node name="Camera2D" type="Camera2D" parent="."]
 position = Vector2(361, 244)
@@ -87,6 +177,7 @@ position = Vector2(361, 244)
 [node name="Dung" parent="Obstacle_1" node_paths=PackedStringArray("waypoints") instance=ExtResource("3_feb5d")]
 position = Vector2(275, 305)
 rotation = 1.5529411
+speed = 50.0
 waypoints = [NodePath("../Waypoints/Waypoint"), NodePath("../Waypoints/Waypoint2")]
 
 [node name="Waypoints" type="Node2D" parent="Obstacle_1"]
@@ -102,6 +193,7 @@ position = Vector2(275, 380)
 [node name="Dung" parent="Obstacle_2" node_paths=PackedStringArray("waypoints") instance=ExtResource("3_feb5d")]
 position = Vector2(385, 380)
 rotation = 1.5529411
+speed = 50.0
 waypoints = [NodePath("../Waypoints/Waypoint"), NodePath("../Waypoints/Waypoint2")]
 
 [node name="Waypoints" type="Node2D" parent="Obstacle_2"]
@@ -111,5 +203,3 @@ position = Vector2(385, 305)
 
 [node name="Waypoint2" type="Marker2D" parent="Obstacle_2/Waypoints"]
 position = Vector2(385, 380)
-
-[connection signal="velocity_computed" from="World/Unit/NavigationAgent2D" to="World/Unit" method="_on_navigation_agent_2d_velocity_computed"]
