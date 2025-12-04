@@ -85,17 +85,17 @@ position = Vector2(361, 244)
 [node name="Obstacle_1" type="Node2D" parent="." groups=["obstacle"]]
 
 [node name="Dung" parent="Obstacle_1" node_paths=PackedStringArray("waypoints") instance=ExtResource("3_feb5d")]
-position = Vector2(290.00003, 305)
+position = Vector2(275, 305)
 rotation = 1.5529411
 waypoints = [NodePath("../Waypoints/Waypoint"), NodePath("../Waypoints/Waypoint2")]
 
 [node name="Waypoints" type="Node2D" parent="Obstacle_1"]
 
 [node name="Waypoint" type="Marker2D" parent="Obstacle_1/Waypoints"]
-position = Vector2(290, 305)
+position = Vector2(275, 305)
 
 [node name="Waypoint2" type="Marker2D" parent="Obstacle_1/Waypoints"]
-position = Vector2(290, 380)
+position = Vector2(275, 380)
 
 [node name="Obstacle_2" type="Node2D" parent="." groups=["obstacle"]]
 

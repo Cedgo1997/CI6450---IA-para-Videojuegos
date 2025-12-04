@@ -4,10 +4,10 @@
 [ext_resource type="Texture2D" uid="uid://cv8egxtciwh8v" path="res://art/beetle-2.png" id="2_8v6sq"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_abqhh"]
-radius = 19.0
+radius = 8.0
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_23bb0"]
-radius = 110.0
+radius = 79.00633
 
 [node name="npc_2" type="CharacterBody2D" groups=["npc"]]
 collision_mask = 3
@@ -21,7 +21,7 @@ rotation_speed = 15.0
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
 rotation = 1.5707964
-scale = Vector2(0.13326547, 0.13326547)
+scale = Vector2(0.07239021, 0.0723902)
 texture = ExtResource("2_8v6sq")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
@@ -32,8 +32,10 @@ wait_time = 0.5
 autostart = true
 
 [node name="NavigationAgent2D" type="NavigationAgent2D" parent="."]
-path_desired_distance = 500.0
+path_desired_distance = 10.0
+path_postprocessing = 1
 avoidance_enabled = true
+avoidance_mask = 2
 debug_enabled = true
 
 [node name="SightArea" type="Area2D" parent="." groups=["npc"]]

@@ -5,6 +5,7 @@ const NPCEnums = preload("res://scripts/enums/npc_enums.gd")
 const BulletScene = preload("res://scenes/bullet.tscn")
 
 @onready var item_detector = $SightArea
+var navigation_agent_2d: NavigationAgent2D = null
 
 @export var max_speed: float = 200.0
 @export var max_acceleration: float = 100.0
@@ -19,7 +20,6 @@ const BulletScene = preload("res://scenes/bullet.tscn")
 
 @export_group('Follower Settings')
 @export var following_duration: float = 5.0
-@export var path_recalculation_interval: float = 0.5
 
 @export_group('Path Following Settings')
 @export var path_offset: float = 5.0
@@ -43,10 +43,6 @@ var apple_seek_behavior: SteeringSeek = null
 var apple_virtual_target: Node2D = null
 var shoot_timer: float = 0.0
 var following_timer: float = 0.0
-var pathfinding_system: PathfindingAStar = null
-var astar_path: Array[Vector2] = []
-var current_path_index: int = 0
-var path_recalculation_timer: float = 0.0
 
 class Path:
 	var path_node: Path2D
@@ -199,7 +195,8 @@ func _ready():
 		sight_area.body_entered.connect(_on_sight_body_entered)
 		sight_area.body_exited.connect(_on_sight_body_exited)
 	
-	_initialize_pathfinding()
+	navigation_agent_2d = get_node_or_null("NavigationAgent2D")
+	_initialize_navigation_agent()
 
 func _initialize_path_following():
 	if not patrol_path:
@@ -211,12 +208,11 @@ func _initialize_path_following():
 	var closest_param = path_wrapper.getParam(global_position, 0.0)
 	follow_path_behavior.current_param = closest_param + 0.5
 
-func _initialize_pathfinding():
-	var map_node = get_tree().get_first_node_in_group("map")
-	if map_node and map_node.has_method("get") and map_node.get("pathfinding"):
-		pathfinding_system = map_node.pathfinding
+func _initialize_navigation_agent():
+	if navigation_agent_2d:
+		navigation_agent_2d.velocity_computed.connect(_on_navigation_agent_2d_velocity_computed)
 	else:
-		push_warning("No se pudo encontrar el sistema de pathfinding en el mapa")
+		push_warning("No se encontró NavigationAgent2D en el NPC")
 
 func _physics_process(delta):
 	match role:
@@ -324,7 +320,7 @@ func _process_face_state(delta):
 			shoot_timer = shoot_interval
 
 func _process_follow_player_state(delta):
-	if not player or not pathfinding_system:
+	if not player or not navigation_agent_2d:
 		return
 	
 	if player_in_sight:
@@ -332,29 +328,21 @@ func _process_follow_player_state(delta):
 	else:
 		following_timer -= delta
 	
-	path_recalculation_timer -= delta
-	if path_recalculation_timer <= 0.0:
-		astar_path = pathfinding_system.find_path(global_position, player.global_position)
-		current_path_index = 0
-		path_recalculation_timer = path_recalculation_interval
+	var player_position = player.global_position
+	navigation_agent_2d.target_position = player_position
 	
-	if astar_path.is_empty():
+	var current_agent_position = global_position
+	var next_path_position = navigation_agent_2d.get_next_path_position()
+	var new_velocity = current_agent_position.direction_to(next_path_position) * max_speed
+	
+	if navigation_agent_2d.is_navigation_finished():
 		return
 	
-	if current_path_index >= astar_path.size():
-		current_path_index = astar_path.size() - 1
+	if navigation_agent_2d.avoidance_enabled:
+		navigation_agent_2d.set_velocity(new_velocity)
+	else:
+		_on_navigation_agent_2d_velocity_computed(new_velocity)
 	
-	var target_position = astar_path[current_path_index]
-	var distance_to_target = global_position.distance_to(target_position)
-	
-	if distance_to_target < 20.0:
-		current_path_index += 1
-		if current_path_index >= astar_path.size():
-			current_path_index = astar_path.size() - 1
-			target_position = astar_path[current_path_index]
-	
-	var direction = (target_position - global_position).normalized()
-	velocity = direction * max_speed
 	move_and_slide()
 	
 	if velocity.length() > 10.0:
@@ -445,3 +433,6 @@ func _on_timer_timeout():
 
 func _on_following_timer_timeout() -> void:
 	pass # Replace with function body.
+
+func _on_navigation_agent_2d_velocity_computed(safe_velocity: Vector2) -> void:
+	velocity = safe_velocity
