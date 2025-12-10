@@ -67,6 +67,8 @@ var last_target_position: Vector2 = Vector2.ZERO
 
 var viewpoint_target: Node2D = null
 var at_viewpoint: bool = false
+var fixed_position: Vector2 = Vector2.ZERO
+var should_be_immovable: bool = false
 
 class Path:
 	var path_node: Path2D
@@ -346,14 +348,25 @@ func _change_state(new_state: NPCEnums.State):
 	# Resetear velocidad angular cuando sale de FACE
 	if previous_state == NPCEnums.State.FACE and new_state != NPCEnums.State.FACE:
 		current_angular_velocity = 0.0
+		should_be_immovable = false
 	
 	# Detener movimiento cuando entra a FACE desde ATTACK (llegó al viewpoint)
 	if previous_state == NPCEnums.State.ATTACK and new_state == NPCEnums.State.FACE:
 		current_velocity = Vector2.ZERO
 		velocity = Vector2.ZERO
+		should_be_immovable = true
+		fixed_position = global_position
+	
+	# Resetear inmovilidad cuando sale de PATROL o FACE a otros estados
+	if (previous_state == NPCEnums.State.PATROL or previous_state == NPCEnums.State.FACE) and \
+	   (new_state != NPCEnums.State.PATROL and new_state != NPCEnums.State.FACE):
+		should_be_immovable = false
 
 func _process_patrol_state(delta):
 	if not patrol_path or not follow_path_behavior:
+		# Sin path, mantener posición fija
+		should_be_immovable = true
+		fixed_position = global_position
 		return
 	
 	var steering_output = follow_path_behavior.getSteering()
@@ -365,11 +378,34 @@ func _process_patrol_state(delta):
 			current_velocity = current_velocity.normalized() * max_speed
 		
 		velocity = current_velocity
+		
+		# Guardar posición antes de move_and_slide si está quieto
+		if current_velocity.length() < 5.0:
+			should_be_immovable = true
+			fixed_position = global_position
+		else:
+			should_be_immovable = false
+		
+		# Guardar posición antes de move_and_slide para restaurarla si es necesario
+		var position_before_move = global_position
+		
 		move_and_slide()
+		
+		# Restaurar posición si debería ser inamovible (previene que colisiones lo muevan)
+		if should_be_immovable:
+			global_position = fixed_position
+			velocity = Vector2.ZERO
+			current_velocity = Vector2.ZERO
 		
 		if current_velocity.length() > 10.0:
 			var target_rotation = current_velocity.angle()
 			rotation = lerp_angle(rotation, target_rotation, rotation_speed * delta)
+	else:
+		# Sin steering output, mantener posición fija
+		should_be_immovable = true
+		fixed_position = global_position
+		velocity = Vector2.ZERO
+		current_velocity = Vector2.ZERO
 
 func _process_go_to_viewpoint_state(delta):
 	if not viewpoint_target or not is_instance_valid(viewpoint_target):
@@ -421,9 +457,18 @@ func _process_face_state(delta):
 	if not player:
 		return
 	
+	# En estado FACE, el NPC debe ser inamovible
+	should_be_immovable = true
+	fixed_position = global_position
+	
 	current_velocity = current_velocity.lerp(Vector2.ZERO, 5.0 * delta)
 	velocity = current_velocity
 	move_and_slide()
+	
+	# Restaurar posición para mantener inamovible
+	global_position = fixed_position
+	velocity = Vector2.ZERO
+	current_velocity = Vector2.ZERO
 	
 	var target_orientation = face_behavior.face_position(player.global_position)
 	var angular_acceleration = face_behavior.align_to_orientation(target_orientation, current_angular_velocity, delta)
