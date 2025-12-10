@@ -21,7 +21,7 @@ rotation_speed = 15.0
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
 rotation = 1.5707964
-scale = Vector2(0.07239021, 0.0723902)
+scale = Vector2(0.08527614, 0.08527614)
 texture = ExtResource("2_8v6sq")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]

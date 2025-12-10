@@ -1,18 +1,28 @@
-[gd_scene load_steps=9 format=3 uid="uid://2ndqmh48gg6u"]
+[gd_scene load_steps=15 format=3 uid="uid://2ndqmh48gg6u"]
 
 [ext_resource type="PackedScene" uid="uid://c5uyejrtyb4uk" path="res://scenes/player.tscn" id="1_e2o6t"]
 [ext_resource type="PackedScene" uid="uid://bpbip0j5fsspu" path="res://world/world.tscn" id="2_feb5d"]
 [ext_resource type="PackedScene" uid="uid://cfshl43alfx02" path="res://scenes/npc_2.tscn" id="3_fc0e3"]
 [ext_resource type="PackedScene" uid="uid://cpd7qmb540grs" path="res://scenes/dung.tscn" id="3_feb5d"]
 [ext_resource type="PackedScene" uid="uid://bmihvde6c5d4e" path="res://scenes/tree.tscn" id="4_7jktm"]
+[ext_resource type="Script" uid="uid://b20qmiwsla5aj" path="res://world/chest.gd" id="7_hve3p"]
+[ext_resource type="Texture2D" uid="uid://884cvg70f6qq" path="res://art/chests.png" id="7_j5wjh"]
 [ext_resource type="Script" uid="uid://irokgaypv1fg" path="res://Tactics/tactical_graph.gd" id="7_vef74"]
 [ext_resource type="PackedScene" uid="uid://dd43i2xyxbp7m" path="res://Tactics/tactical_location.tscn" id="8_hve3p"]
+[ext_resource type="Texture2D" uid="uid://di8tq51bcha2x" path="res://art/key_big.png" id="8_vef74"]
+[ext_resource type="Script" uid="uid://c25k74ovskvop" path="res://world/key.gd" id="9_mfdv2"]
 
 [sub_resource type="Curve2D" id="Curve2D_fc0e3"]
 _data = {
 "points": PackedVector2Array(-9.63858, 8.096407, 9.63858, -8.096407, 16, -72, -11.566296, -10.024123, 11.566296, 10.024123, 159, -70, 14.650641, -12.722925, -14.650641, 12.722925, 162, 80, 14.265099, 11.951839, -14.265099, -11.951839, 13, 82, -10.79521, 13.494012, 10.79521, -13.494012, 16, -72)
 }
 point_count = 5
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_j5wjh"]
+radius = 29.017237
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_hve3p"]
+radius = 17.029387
 
 [node name="Game" type="Node2D"]
 
@@ -22,7 +32,7 @@ position = Vector2(0, -70)
 [node name="Player" parent="World" instance=ExtResource("1_e2o6t")]
 position = Vector2(52, 692)
 scale = Vector2(0.5, 0.5)
-collision_layer = 2
+collision_layer = 3
 collision_mask = 3
 speed = 150.0
 
@@ -88,7 +98,7 @@ connected_locations = [NodePath("../TacticalLocation4"), NodePath("../TacticalLo
 node_id = 2
 
 [node name="TacticalLocation3" parent="World/TacticalGraph/TacticalLocations" node_paths=PackedStringArray("connected_locations") instance=ExtResource("8_hve3p")]
-position = Vector2(251, 106)
+position = Vector2(209, 107)
 static_qualities = {
 "altura": 0.4,
 "cobertura": 0.5,
@@ -128,7 +138,7 @@ connected_locations = [NodePath("../TacticalLocation4"), NodePath("../TacticalLo
 node_id = 6
 
 [node name="TacticalLocation7" parent="World/TacticalGraph/TacticalLocations" node_paths=PackedStringArray("connected_locations") instance=ExtResource("8_hve3p")]
-position = Vector2(646, 501)
+position = Vector2(647, 466)
 static_qualities = {
 "altura": 0.5,
 "cobertura": 0.9,
@@ -172,6 +182,48 @@ node_id = 10
 [node name="WatchmanViewpoint" type="Node2D" parent="World" groups=["PositionViewpoint1"]]
 position = Vector2(156, 28)
 
+[node name="Chest" type="Node2D" parent="World"]
+position = Vector2(656, 516)
+script = ExtResource("7_hve3p")
+metadata/_edit_group_ = true
+
+[node name="Chest Zone" type="Area2D" parent="World/Chest"]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="World/Chest/Chest Zone"]
+shape = SubResource("CircleShape2D_j5wjh")
+
+[node name="closed" type="Sprite2D" parent="World/Chest"]
+scale = Vector2(1.625, 1.625)
+texture = ExtResource("7_j5wjh")
+region_enabled = true
+region_rect = Rect2(166.594, 7.462178, 18.797241, 16.906055)
+
+[node name="opened" type="Sprite2D" parent="World/Chest"]
+visible = false
+position = Vector2(0, -2)
+scale = Vector2(1.5555556, 1.5555557)
+texture = ExtResource("7_j5wjh")
+region_enabled = true
+region_rect = Rect2(166.64929, 99.553795, 18.813217, 20.895088)
+
+[node name="Key" type="StaticBody2D" parent="World"]
+position = Vector2(154, -59)
+collision_layer = 3
+collision_mask = 3
+script = ExtResource("9_mfdv2")
+metadata/_edit_group_ = true
+
+[node name="Area2D" type="Area2D" parent="World/Key"]
+collision_layer = 3
+collision_mask = 3
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="World/Key/Area2D"]
+shape = SubResource("CircleShape2D_hve3p")
+
+[node name="Sprite2D" type="Sprite2D" parent="World/Key"]
+scale = Vector2(0.8125, 0.8125)
+texture = ExtResource("8_vef74")
+
 [node name="Camera2D" type="Camera2D" parent="."]
 position = Vector2(361, 244)
 
@@ -206,3 +258,8 @@ position = Vector2(385, 305)
 
 [node name="Waypoint2" type="Marker2D" parent="Obstacle_2/Waypoints"]
 position = Vector2(385, 380)
+
+[connection signal="body_entered" from="World/Chest/Chest Zone" to="World/Key" method="_on_chest_zone_body_entered"]
+[connection signal="body_exited" from="World/Chest/Chest Zone" to="World/Key" method="_on_chest_zone_body_exited"]
+[connection signal="chest_opened" from="World/Key" to="World/Chest" method="_on_key_chest_opened"]
+[connection signal="area_entered" from="World/Key/Area2D" to="World/Key" method="_on_area_2d_area_entered"]

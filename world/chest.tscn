@@ -1,0 +1,25 @@
+[gd_scene load_steps=3 format=3 uid="uid://d0sjbug0amfkd"]
+
+[ext_resource type="Texture2D" uid="uid://884cvg70f6qq" path="res://art/chests.png" id="1_glt1k"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_i1if6"]
+radius = 17.0
+
+[node name="Chest" type="Node2D"]
+
+[node name="Chest Zone" type="Area2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Chest Zone"]
+shape = SubResource("CircleShape2D_i1if6")
+
+[node name="closed" type="Sprite2D" parent="."]
+texture = ExtResource("1_glt1k")
+region_enabled = true
+region_rect = Rect2(166.68027, 7.594102, 18.755524, 16.723682)
+
+[node name="opened" type="Sprite2D" parent="."]
+visible = false
+position = Vector2(0, -2)
+texture = ExtResource("1_glt1k")
+region_enabled = true
+region_rect = Rect2(166.50801, 99.543846, 19.003342, 20.782028)
