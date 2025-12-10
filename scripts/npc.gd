@@ -65,6 +65,9 @@ var current_path_index: int = 0
 var path_recalculate_timer: float = 0.0
 var last_target_position: Vector2 = Vector2.ZERO
 
+var viewpoint_target: Node2D = null
+var at_viewpoint: bool = false
+
 class Path:
 	var path_node: Path2D
 	var curve: Curve2D
@@ -232,6 +235,14 @@ func _ready():
 			print("NPC Follower: Grafo táctico inicializado correctamente")
 		else:
 			push_warning("NPC Follower: No se encontró el grafo táctico. El pathfinding táctico no funcionará.")
+	
+	# Inicializar viewpoint para PATROLMAN
+	if role == NPCEnums.Role.PATROLMAN:
+		var viewpoints = get_tree().get_nodes_in_group("PositionViewpoint1")
+		if viewpoints.size() > 0:
+			viewpoint_target = viewpoints[0]
+		else:
+			push_warning("NPC PATROLMAN: No se encontró ningún Node2D en el grupo 'PositionViewpoint1'")
 
 func _initialize_path_following():
 	if not patrol_path:
@@ -268,6 +279,8 @@ func _process_patrolman_behavior(delta):
 			_process_face_state(delta)
 		NPCEnums.State.CHASE_APPLE:
 			_process_chasing_apple_state(delta)
+		NPCEnums.State.ATTACK:
+			_process_go_to_viewpoint_state(delta)
 
 func _process_guard_behavior(delta):
 	_update_state()
@@ -301,6 +314,23 @@ func _get_highest_priority_state() -> NPCEnums.State:
 		# FOLLOWER: Sigue mientras el timer esté activo
 		if following_timer > 0.0:
 			return NPCEnums.State.FOLLOW_PLAYER
+	elif role == NPCEnums.Role.PATROLMAN:
+		# PATROLMAN: Cuando ve al jugador, primero ir al viewpoint, luego FACE
+		if player_in_sight:
+			if viewpoint_target and is_instance_valid(viewpoint_target):
+				# Verificar si ya está en el viewpoint (distancia más pequeña para llegar completamente)
+				var distance_to_viewpoint = global_position.distance_to(viewpoint_target.global_position)
+				if distance_to_viewpoint < 10.0:
+					# Ya está en el viewpoint, hacer FACE
+					at_viewpoint = true
+					return NPCEnums.State.FACE
+				else:
+					# Ir al viewpoint primero
+					at_viewpoint = false
+					return NPCEnums.State.ATTACK  # Usaremos ATTACK como estado temporal para ir al viewpoint
+			else:
+				# No hay viewpoint, hacer FACE directamente
+				return NPCEnums.State.FACE
 	else:
 		# Otros roles: comportamiento normal (FACE cuando ve al jugador)
 		if player_in_sight:
@@ -312,8 +342,15 @@ func _get_highest_priority_state() -> NPCEnums.State:
 func _change_state(new_state: NPCEnums.State):
 	previous_state = current_state
 	current_state = new_state
+	
+	# Resetear velocidad angular cuando sale de FACE
 	if previous_state == NPCEnums.State.FACE and new_state != NPCEnums.State.FACE:
 		current_angular_velocity = 0.0
+	
+	# Detener movimiento cuando entra a FACE desde ATTACK (llegó al viewpoint)
+	if previous_state == NPCEnums.State.ATTACK and new_state == NPCEnums.State.FACE:
+		current_velocity = Vector2.ZERO
+		velocity = Vector2.ZERO
 
 func _process_patrol_state(delta):
 	if not patrol_path or not follow_path_behavior:
@@ -333,6 +370,52 @@ func _process_patrol_state(delta):
 		if current_velocity.length() > 10.0:
 			var target_rotation = current_velocity.angle()
 			rotation = lerp_angle(rotation, target_rotation, rotation_speed * delta)
+
+func _process_go_to_viewpoint_state(delta):
+	if not viewpoint_target or not is_instance_valid(viewpoint_target):
+		return
+	
+	if not navigation_agent_2d:
+		return
+	
+	var viewpoint_position = viewpoint_target.global_position
+	var distance_to_viewpoint = global_position.distance_to(viewpoint_position)
+	
+	# Verificar distancia real al viewpoint (más preciso que is_navigation_finished)
+	if distance_to_viewpoint < 10.0:
+		# Ya llegó al viewpoint, detenerse completamente
+		current_velocity = current_velocity.lerp(Vector2.ZERO, 10.0 * delta)
+		velocity = current_velocity
+		move_and_slide()
+		return
+	
+	# Continuar moviéndose hacia el viewpoint
+	navigation_agent_2d.target_position = viewpoint_position
+	
+	var current_agent_position = global_position
+	var next_path_position = navigation_agent_2d.get_next_path_position()
+	
+	# Si el NavigationAgent dice que terminó pero aún no estamos cerca, usar dirección directa
+	if navigation_agent_2d.is_navigation_finished() and distance_to_viewpoint >= 10.0:
+		# Ir directamente al viewpoint si NavigationAgent ya terminó pero no estamos cerca
+		var direction = (viewpoint_position - current_agent_position).normalized()
+		var new_velocity = direction * max_speed
+		if navigation_agent_2d.avoidance_enabled:
+			navigation_agent_2d.set_velocity(new_velocity)
+		else:
+			_on_navigation_agent_2d_velocity_computed(new_velocity)
+	else:
+		var new_velocity = current_agent_position.direction_to(next_path_position) * max_speed
+		if navigation_agent_2d.avoidance_enabled:
+			navigation_agent_2d.set_velocity(new_velocity)
+		else:
+			_on_navigation_agent_2d_velocity_computed(new_velocity)
+	
+	move_and_slide()
+	
+	if velocity.length() > 10.0:
+		var target_rotation = velocity.angle()
+		rotation = lerp_angle(rotation, target_rotation, rotation_speed * delta)
 
 func _process_face_state(delta):
 	if not player:
@@ -467,6 +550,9 @@ func _on_sight_body_entered(body: Node2D):
 func _on_sight_body_exited(body: Node2D):
 	if body.is_in_group("player"):
 		player_in_sight = false
+		# Resetear el estado del viewpoint cuando el jugador sale de la vista
+		if role == NPCEnums.Role.PATROLMAN:
+			at_viewpoint = false
 		
 func _process_chasing_apple_state(delta):
 	if target_apple == null or not is_instance_valid(target_apple):

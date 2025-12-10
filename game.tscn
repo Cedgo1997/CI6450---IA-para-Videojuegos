@@ -169,6 +169,9 @@ node_id = 10
 
 [node name="ConnectionsVisualizer" type="Node2D" parent="World/TacticalGraph"]
 
+[node name="WatchmanViewpoint" type="Node2D" parent="World" groups=["PositionViewpoint1"]]
+position = Vector2(156, 28)
+
 [node name="Camera2D" type="Camera2D" parent="."]
 position = Vector2(361, 244)
 
