@@ -4,7 +4,6 @@
 [ext_resource type="Texture2D" uid="uid://cv8egxtciwh8v" path="res://art/beetle-2.png" id="2_8v6sq"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_abqhh"]
-radius = 8.0
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_23bb0"]
 radius = 111.0
@@ -21,7 +20,7 @@ rotation_speed = 15.0
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
 rotation = 1.5707964
-scale = Vector2(0.08527614, 0.08527614)
+scale = Vector2(0.10503459, 0.10503459)
 texture = ExtResource("2_8v6sq")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]

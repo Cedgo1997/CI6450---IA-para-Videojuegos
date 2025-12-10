@@ -70,6 +70,8 @@ var viewpoint_target: Node2D = null
 var at_viewpoint: bool = false
 var fixed_position: Vector2 = Vector2.ZERO
 var should_be_immovable: bool = false
+var initial_position: Vector2 = Vector2.ZERO
+var returning_to_position: bool = false
 
 class Path:
 	var path_node: Path2D
@@ -198,6 +200,9 @@ class FollowPath:
 			virtual_target.queue_free()
 
 func _ready():
+	# Guardar posición inicial (especialmente importante para GUARD)
+	initial_position = global_position
+	
 	player = get_tree().get_first_node_in_group("player")
 	item_detector.body_entered.connect(_on_apple_detected)
 	item_detector.area_entered.connect(_on_apple_detected)
@@ -309,7 +314,13 @@ func _update_state():
 		_change_state(desired_state)
 
 func _get_highest_priority_state() -> NPCEnums.State:
+	# Si hay una manzana objetivo, perseguirla (interrumpe el regreso)
 	if target_apple != null and is_instance_valid(target_apple):
+		returning_to_position = false  # Cancelar regreso si hay nueva manzana
+		return NPCEnums.State.CHASE_APPLE
+	
+	# Si está regresando a la posición inicial (GUARD), mantener en CHASE_APPLE para ejecutar el regreso
+	if returning_to_position and role == NPCEnums.Role.GUARD:
 		return NPCEnums.State.CHASE_APPLE
 	
 	# Different behavior based on role
@@ -601,8 +612,16 @@ func _on_sight_body_exited(body: Node2D):
 			at_viewpoint = false
 		
 func _process_chasing_apple_state(delta):
+	# Si está regresando a la posición inicial (solo para GUARD)
+	if returning_to_position and role == NPCEnums.Role.GUARD:
+		_return_to_initial_position(delta)
+		return
+	
 	if target_apple == null or not is_instance_valid(target_apple):
 		target_apple = null
+		# Si es GUARD y no hay más manzanas, regresar a posición inicial
+		if role == NPCEnums.Role.GUARD and apples_in_range.is_empty():
+			returning_to_position = true
 		return
 	
 	apple_virtual_target.global_position = target_apple.global_position
@@ -621,26 +640,49 @@ func _process_chasing_apple_state(delta):
 		rotation = lerp_angle(rotation, target_rotation, rotation_speed * delta)
 	
 	if global_position.distance_to(target_apple.global_position) < 15.0:
+		# Guardar referencia a la manzana antes de eliminarla
+		var collected_apple = target_apple
 		target_apple = null
-		apples_in_range.erase(target_apple)
-		update_target_apple()
+		apples_in_range.erase(collected_apple)
+		
+		# Si es GUARD, después de agarrar la manzana, regresar a posición inicial
+		if role == NPCEnums.Role.GUARD:
+			returning_to_position = true
+			print("GUARD: Manzana agarrada, regresando a posición inicial: ", initial_position)
+			# No actualizar target_apple si está regresando, para evitar que persiga otra manzana
+		else:
+			update_target_apple()
 
 func _on_apple_detected(area):
 	if area.is_in_group("pickable"):
 		if not apples_in_range.has(area):
 			apples_in_range.append(area)
-		update_target_apple()
+		# Si el GUARD está regresando, no actualizar target_apple (dejar que termine el regreso primero)
+		if not (role == NPCEnums.Role.GUARD and returning_to_position):
+			update_target_apple()
 
 func _on_apple_lost(area):
 	if area.is_in_group("pickable"):
 		apples_in_range.erase(area)
 		if area == target_apple:
 			target_apple = null
+		# Si el GUARD está regresando, no actualizar target_apple
+		if not (role == NPCEnums.Role.GUARD and returning_to_position):
 			update_target_apple()
+		elif role == NPCEnums.Role.GUARD and apples_in_range.is_empty():
+			# Si se perdió la última manzana y está regresando, mantener el regreso
+			target_apple = null
 
 func update_target_apple():
+	# Si el GUARD está regresando, no actualizar target_apple
+	if role == NPCEnums.Role.GUARD and returning_to_position:
+		return
+	
 	if apples_in_range.is_empty():
 		target_apple = null
+		# Si es GUARD y no hay más manzanas, regresar a posición inicial
+		if role == NPCEnums.Role.GUARD and not returning_to_position:
+			returning_to_position = true
 		return
 	
 	var closest_apple = null
@@ -655,6 +697,63 @@ func update_target_apple():
 	
 	if closest_apple != null:
 		target_apple = closest_apple
+
+func _return_to_initial_position(delta):
+	var distance_to_initial = global_position.distance_to(initial_position)
+	
+	if distance_to_initial < 10.0:
+		# Ya llegó a la posición inicial
+		returning_to_position = false
+		global_position = initial_position
+		velocity = Vector2.ZERO
+		current_velocity = Vector2.ZERO
+		print("GUARD: Llegó a posición inicial")
+		return
+	
+	if not navigation_agent_2d:
+		# Fallback: usar steering seek directo si no hay NavigationAgent2D
+		apple_virtual_target.global_position = initial_position
+		var steering_output = apple_seek_behavior.calculate_steering()
+		current_velocity += steering_output * delta
+		
+		if current_velocity.length() > max_speed:
+			current_velocity = current_velocity.normalized() * max_speed
+		
+		velocity = current_velocity
+		move_and_slide()
+		
+		if current_velocity.length() > 10.0:
+			var target_rotation = current_velocity.angle()
+			rotation = lerp_angle(rotation, target_rotation, rotation_speed * delta)
+		return
+	
+	# Usar NavigationAgent2D para regresar
+	
+	navigation_agent_2d.target_position = initial_position
+	
+	var current_agent_position = global_position
+	var next_path_position = navigation_agent_2d.get_next_path_position()
+	
+	if navigation_agent_2d.is_navigation_finished() and distance_to_initial >= 10.0:
+		# Ir directamente a la posición inicial si NavigationAgent ya terminó pero no estamos cerca
+		var direction = (initial_position - current_agent_position).normalized()
+		var new_velocity = direction * max_speed
+		if navigation_agent_2d.avoidance_enabled:
+			navigation_agent_2d.set_velocity(new_velocity)
+		else:
+			_on_navigation_agent_2d_velocity_computed(new_velocity)
+	else:
+		var new_velocity = current_agent_position.direction_to(next_path_position) * max_speed
+		if navigation_agent_2d.avoidance_enabled:
+			navigation_agent_2d.set_velocity(new_velocity)
+		else:
+			_on_navigation_agent_2d_velocity_computed(new_velocity)
+	
+	move_and_slide()
+	
+	if velocity.length() > 10.0:
+		var target_rotation = velocity.angle()
+		rotation = lerp_angle(rotation, target_rotation, rotation_speed * delta)
 
 func _shoot_bullet():
 	var bullet = BulletScene.instantiate()

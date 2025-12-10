@@ -48,6 +48,7 @@ position = Vector2(657, 448)
 rotation = -1.5707964
 max_acceleration = 300.0
 role = 1
+bullet_speed = 500.0
 path_offset = 20.0
 tactical_graph_path = NodePath("../TacticalGraph")
 
