@@ -19,6 +19,7 @@ var navigation_agent_2d: NavigationAgent2D = null
 @export_group('Shooting Settings')
 @export var shoot_interval: float = 0.5
 @export var can_shoot: bool = true
+@export var bullet_speed: float = 2000.0
 
 @export_group('Follower Settings')
 @export var following_duration: float = 5.0
@@ -662,6 +663,7 @@ func _shoot_bullet():
 	bullet.pos = global_position
 	bullet.rota = rotation
 	bullet.dir = rotation
+	bullet.speed = bullet_speed
 	
 	# Add bullet to the scene tree (parent scene)
 	get_parent().add_child(bullet)
